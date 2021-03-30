@@ -61,6 +61,12 @@ extern "C"
 //
 //*****************************************************************************
 
+#ifndef ahskhak
+#undef EALLOW
+#undef EDIS
+#include "F2806x_Device.h"
+#endif
+
 #include <stdbool.h>
 #include <stdint.h>
 #include "inc/hw_gpio.h"
@@ -70,6 +76,7 @@ extern "C"
 #include "cpu.h"
 #include "xbar.h"
 #include "debug.h"
+
 
 //*****************************************************************************
 //
@@ -412,6 +419,7 @@ GPIO_getInterruptCounter(GPIO_ExternalIntNum extIntNum)
 static inline uint32_t
 GPIO_readPin(uint32_t pin)
 {
+#ifdef _TMS_00JJ
     volatile uint32_t *gpioDataReg;
 
     //
@@ -423,6 +431,13 @@ GPIO_readPin(uint32_t pin)
                   ((pin / 32U) * GPIO_DATA_REGS_STEP);
 
     return((gpioDataReg[GPIO_GPxDAT_INDEX] >> (pin % 32U)) & (uint32_t)0x1U);
+#else
+    //return GpioCtrlRegs.GPBDIR.bit.GPIO55
+    if (pin < 32)
+        return (GpioDataRegs.GPADAT.all >> (pin%32u)) & 1ul;
+    else
+        return (GpioDataRegs.GPBDAT.all >> ((pin-32)%32u)) & 1ul;
+#endif
 }
 
 
@@ -445,6 +460,7 @@ GPIO_readPin(uint32_t pin)
 static inline void
 GPIO_writePin(uint32_t pin, uint32_t outVal)
 {
+#ifdef _TMS_00JJ
     volatile uint32_t *gpioDataReg;
     uint32_t pinMask;
 
@@ -466,6 +482,19 @@ GPIO_writePin(uint32_t pin, uint32_t outVal)
     {
         gpioDataReg[GPIO_GPxSET_INDEX] = pinMask;
     }
+#else
+    if (pin < 32) {
+        if (outVal)
+            GpioDataRegs.GPASET.all = 1ul << pin;
+        else
+            GpioDataRegs.GPACLEAR.all = 1ul << pin;
+    } else {
+        if (outVal)
+            GpioDataRegs.GPBSET.all = 1ul << ((pin-32)%32);
+        else
+            GpioDataRegs.GPBCLEAR.all = 1ul << ((pin-32)%32);
+    }
+#endif
 }
 
 //*****************************************************************************
@@ -486,6 +515,7 @@ GPIO_writePin(uint32_t pin, uint32_t outVal)
 static inline void
 GPIO_togglePin(uint32_t pin)
 {
+#ifdef USUSGATMS
     volatile uint32_t *gpioDataReg;
 
     //
@@ -497,6 +527,13 @@ GPIO_togglePin(uint32_t pin)
                   ((pin / 32U) * GPIO_DATA_REGS_STEP);
 
     gpioDataReg[GPIO_GPxTOGGLE_INDEX] = (uint32_t)1U << (pin % 32U);
+#else
+    if (pin < 32) {
+        GpioDataRegs.GPATOGGLE.all = 1ul << pin;
+    } else {
+        GpioDataRegs.GPBTOGGLE.all = 1ul << ((pin-32)%32);
+    }
+#endif
 }
 
 //*****************************************************************************
