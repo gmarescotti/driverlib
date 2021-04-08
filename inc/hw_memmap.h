@@ -145,8 +145,17 @@
 #define EPWMXBAR_BASE             0x00007A00U
 #define CLBXBAR_BASE              0x00007A40U
 #define OUTPUTXBAR_BASE           0x00007A80U
+
+//      GPIOCTRL    : origin = 0x006F80, length = 0x000040     /* GPIO Control Registers */
+//      GPIODAT     : origin = 0x006FC0, length = 0x000020     /* GPIO Data Registers */
+//      GPIOINT     : origin = 0x006FE0, length = 0x000020     /* GPIO Interrupt/LPM Registers */
+#ifndef __TMS320C2000__
 #define GPIOCTRL_BASE             0x00007C00U
 #define GPIODATA_BASE             0x00007F00U
+#else
+#define GPIOCTRL_BASE             0x00006F80U
+#define GPIODATA_BASE             0x00006FC0U
+#endif
 #define LS0_RAM_BASE              0x00008000U
 #define LS1_RAM_BASE              0x00008800U
 #define LS2_RAM_BASE              0x00009000U

@@ -55,6 +55,7 @@
 #define GPIO_O_GPAMUX2    0x8U     // GPIO A Peripheral Mux (GPIO16 to GPIO31)
 #define GPIO_O_GPADIR     0xAU     // GPIO A Direction (GPIO0 to GPIO31)
 #define GPIO_O_GPAPUD     0xCU     // GPIO A Pull-Up Disable (GPIO0 to GPIO31)
+#ifndef __TMS320C2000__
 #define GPIO_O_GPAINV     0x10U    // GPIO A Input Inversion (GPIO0 to GPIO31)
 #define GPIO_O_GPAODR     0x12U    // GPIO A Open Drain Output Mode (GPIO0 to GPIO31)
 #define GPIO_O_GPAAMSEL   0x14U    // GPIO A Analog Mode Select (GPIO0 to GPIO31)
@@ -66,6 +67,7 @@
 #define GPIO_O_GPACSEL4   0x2EU    // GPIO A Master Core Select (GPIO24 to GPIO31)
 #define GPIO_O_GPALOCK    0x3CU    // GPIO A Lock Register (GPIO0 to GPIO31)
 #define GPIO_O_GPACR      0x3EU    // GPIO A Lock Commit Register (GPIO0 to GPIO31)
+
 #define GPIO_O_GPBCTRL    0x40U    // GPIO B Qualification Sampling Period (GPIO32 to GPIO63)
 #define GPIO_O_GPBQSEL1   0x42U    // GPIO B Qualification Type (GPIO32 to GPIO47)
 #define GPIO_O_GPBQSEL2   0x44U    // GPIO B Qualification Type (GPIO48 to GPIO63)
@@ -83,6 +85,16 @@
 #define GPIO_O_GPBCSEL4   0x6EU    // GPIO B Master Core Select (GPIO56 to GPIO63)
 #define GPIO_O_GPBLOCK    0x7CU    // GPIO B Lock Register (GPIO32 to GPIO63)
 #define GPIO_O_GPBCR      0x7EU    // GPIO B Lock Commit Register (GPIO32 to GPIO63)
+#else
+#define GPIO_O_GPBCTRL    0x10U    // GPIO B Qualification Sampling Period (GPIO32 to GPIO63)
+#define GPIO_O_GPBQSEL1   0x12U    // GPIO B Qualification Type (GPIO32 to GPIO47)
+#define GPIO_O_GPBQSEL2   0x14U    // GPIO B Qualification Type (GPIO48 to GPIO63)
+#define GPIO_O_GPBMUX1    0x16U    // GPIO B Peripheral Mux (GPIO32 to GPIO47)
+#define GPIO_O_GPBMUX2    0x18U    // GPIO B Peripheral Mux (GPIO48 to GPIO63)
+#define GPIO_O_GPBDIR     0x1AU    // GPIO B Direction (GPIO32 to GPIO63)
+#define GPIO_O_GPBPUD     0x1CU    // GPIO B Pull-Up Disable (GPIO32 to GPIO63)
+#endif
+
 #define GPIO_O_GPHCTRL    0x1C0U   // GPIO H Qualification Sampling Period (GPIO224 to GPIO255)
 #define GPIO_O_GPHQSEL1   0x1C2U   // GPIO H Qualification Type (GPIO224 to GPIO239)
 #define GPIO_O_GPHQSEL2   0x1C4U   // GPIO H Qualification Type (GPIO240 to GPIO255)

@@ -186,6 +186,7 @@ GPIO_setPadConfig(uint32_t pin, uint32_t pinType)
 
     EALLOW;
 
+#ifndef __TMS320C2000__
     //
     // Enable open drain if necessary
     //
@@ -197,6 +198,9 @@ GPIO_setPadConfig(uint32_t pin, uint32_t pinType)
     {
         gpioBaseAddr[GPIO_GPxODR_INDEX] &= ~pinMask;
     }
+#else
+    ASSERT(pinType & GPIO_PIN_TYPE_OD); // TO BE IMPLEMENTED
+#endif
 
     //
     // Enable pull-up if necessary
@@ -210,6 +214,7 @@ GPIO_setPadConfig(uint32_t pin, uint32_t pinType)
         gpioBaseAddr[GPIO_GPxPUD_INDEX] |= pinMask;
     }
 
+#ifndef __TMS320C2000__
     //
     // Invert polarity if necessary
     //
@@ -221,6 +226,9 @@ GPIO_setPadConfig(uint32_t pin, uint32_t pinType)
     {
         gpioBaseAddr[GPIO_GPxINV_INDEX] &= ~pinMask;
     }
+#else
+    ASSERT(pinType & GPIO_PIN_TYPE_INVERT);
+#endif
 
     EDIS;
 }
@@ -248,6 +256,7 @@ GPIO_getPadConfig(uint32_t pin)
 
     pinTypeRes = GPIO_PIN_TYPE_STD;
 
+#ifndef __TMS320C2000__
     //
     // Get open drain value
     //
@@ -255,7 +264,9 @@ GPIO_getPadConfig(uint32_t pin)
     {
         pinTypeRes |= GPIO_PIN_TYPE_OD;
     }
-
+#else
+    ASSERT((gpioBaseAddr[GPIO_GPxODR_INDEX] & pinMask) != 0U);
+#endif
     //
     // Get pull-up value
     //
@@ -264,6 +275,7 @@ GPIO_getPadConfig(uint32_t pin)
         pinTypeRes |= GPIO_PIN_TYPE_PULLUP;
     }
 
+#ifndef __TMS320C2000__
     //
     // Get polarity value
     //
@@ -271,7 +283,7 @@ GPIO_getPadConfig(uint32_t pin)
     {
         pinTypeRes |= GPIO_PIN_TYPE_INVERT;
     }
-
+#endif
     return(pinTypeRes);
 }
 
@@ -386,6 +398,7 @@ GPIO_setQualificationPeriod(uint32_t pin, uint32_t divider)
 void
 GPIO_setMasterCore(uint32_t pin, GPIO_CoreSelect core)
 {
+#ifndef __TMS320C2000__
     volatile uint32_t *gpioBaseAddr;
     uint32_t cSelIndex;
     uint32_t shiftAmt;
@@ -399,7 +412,6 @@ GPIO_setMasterCore(uint32_t pin, GPIO_CoreSelect core)
                    ((pin / 32U) * GPIO_CTRL_REGS_STEP);
     shiftAmt = (uint32_t)GPIO_GPACSEL1_GPIO1_S * (pin % 8U);
     cSelIndex = GPIO_GPxCSEL_INDEX + ((pin % 32U) / 8U);
-
     //
     // Write the core parameter into the register.
     //
@@ -407,6 +419,9 @@ GPIO_setMasterCore(uint32_t pin, GPIO_CoreSelect core)
     gpioBaseAddr[cSelIndex] &= ~((uint32_t)GPIO_GPACSEL1_GPIO0_M << shiftAmt);
     gpioBaseAddr[cSelIndex] |= (uint32_t)core << shiftAmt;
     EDIS;
+#else
+    ASSERT(false);
+#endif
 }
 
 //*****************************************************************************
@@ -417,6 +432,7 @@ GPIO_setMasterCore(uint32_t pin, GPIO_CoreSelect core)
 void
 GPIO_setAnalogMode(uint32_t pin, GPIO_AnalogMode mode)
 {
+#ifndef __TMS320C2000__
     volatile uint32_t *gpioBaseAddr;
     uint32_t pinMask;
 
@@ -430,7 +446,6 @@ GPIO_setAnalogMode(uint32_t pin, GPIO_AnalogMode mode)
                    ((pin / 32U) * GPIO_CTRL_REGS_STEP);
 
     EALLOW;
-
     //
     // Set the analog mode selection.
     //
@@ -449,6 +464,9 @@ GPIO_setAnalogMode(uint32_t pin, GPIO_AnalogMode mode)
         gpioBaseAddr[GPIO_GPxAMSEL_INDEX] &= ~pinMask;
     }
 
+#else
+    ASSERT(false);
+#endif
     EDIS;
 }
 
@@ -477,10 +495,13 @@ GPIO_setPinConfig(uint32_t pinConfig)
     //
     // Write value into GMUX register
     //
+#ifndef __TMS320C2000__
     HWREG(muxRegAddr + GPIO_MUX_TO_GMUX) =
         (HWREG(muxRegAddr + GPIO_MUX_TO_GMUX) & ~pinMask) |
         (((pinConfig >> 2) & (uint32_t)0x3U) << shiftAmt);
-
+#else
+    ASSERT(false);
+#endif
     //
     // Write value into MUX register
     //
