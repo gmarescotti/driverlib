@@ -137,7 +137,12 @@ extern "C"
 // This function is called in SysCtl_resetPeripheral after resetting
 // analog peripherals
 //
+#ifdef TMS0049 // GGG
 #define Device_cal ((void (*)(void))((uintptr_t)0x070282))
+#else
+#undef Device_cal
+#define Device_cal() // (void (*)(void))(uintptr_t)0x3D7C80
+#endif
 
 //*****************************************************************************
 //

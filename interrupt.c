@@ -209,6 +209,7 @@ Interrupt_initVectorTable(void)
 void
 Interrupt_enable(uint32_t interruptNumber)
 {
+#ifndef __TMS320C2000__
     bool intsDisabled;
     uint16_t intGroup;
     uint16_t groupMask;
@@ -259,6 +260,7 @@ Interrupt_enable(uint32_t interruptNumber)
     {
         (void)Interrupt_enableMaster();
     }
+#endif
 }
 
 //*****************************************************************************

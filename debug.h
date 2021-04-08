@@ -50,7 +50,10 @@
 // application's responsibility to define the __error__ function.
 //
 //*****************************************************************************
-extern void __error__(char *filename, uint32_t line);
+static inline void __error__(char *filename, uint32_t line) {
+    asm("    ESTOP0");
+    asm("    SB 0, UNC");       ///< Implement a software breakpoint.
+}
 
 //*****************************************************************************
 //

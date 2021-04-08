@@ -41,12 +41,6 @@
 //###########################################################################
 #include "can.h"
 
-#if __TMS320C2000__
-#undef EALLOW
-#undef EDIS
-#include "F2806x_Device.h"
-#endif
-
 //*****************************************************************************
 //
 // CAN_initModule
@@ -308,9 +302,9 @@ CAN_setBitTiming(uint32_t base, uint16_t prescaler,
 
     // Wait until the CPU no longer has permission to change the configuration registers
     do
-        {
+    {
         ECanaShadow.CANES.all = ECanaRegs.CANES.all;
-        } while(ECanaShadow.CANES.bit.CCE != 0 );       // Wait for CCE bit to be  cleared..
+    } while(ECanaShadow.CANES.bit.CCE != 0 );       // Wait for CCE bit to be  cleared..
 
     /* Disable all Mailboxes  */
     ECanaRegs.CANME.all = 0;        // Required before writing the MSGIDs
@@ -371,7 +365,7 @@ CAN_clearInterruptStatus(uint32_t base, uint32_t intClr)
         }
     }
 #else
-//#error "TO BE IMPLEMENTED"
+    ECanaRegs.CANRMP.all |= (1 << intClr);
 #endif
 }
 
@@ -560,32 +554,77 @@ CAN_setupMessageObject(uint32_t base, uint32_t objID, uint32_t msgID,
     HWREG_BP(base + CAN_O_IF1CMD) =
     cmdMaskReg | (objID & CAN_IF1CMD_MSG_NUM_M);
 #else
+    //
+    // Check the arguments.
+    //
+    ASSERT(CAN_isBaseValid(base));
+    ASSERT((objID <= 32U) && (objID > 0U));
+    ASSERT(msgLen <= 8U);
+
     struct ECAN_REGS ECanaShadow;
 
     volatile struct MBOX *mboxes = &ECanaMboxes.MBOX0;
 
+    objID--;
+
     mboxes[objID].MSGID.all = 0;
 
+    /**
+     * Configura message-id per la mailbox
+     */
     if (frame == CAN_MSG_FRAME_STD) {
         mboxes[objID].MSGID.bit.STDMSGID = msgID;
+        mboxes[objID].MSGID.bit.IDE = 0;
     } else {
         mboxes[objID].MSGID.bit.EXTMSGID_L = msgID & 0x0000FFFF;
         mboxes[objID].MSGID.bit.EXTMSGID_H = (msgID & 0x00030000) >> 16;
         mboxes[objID].MSGID.bit.STDMSGID   = (msgID & 0x1FFC0000) >> 18;
+        mboxes[objID].MSGID.bit.IDE = 1;
     }
+
+    /**
+    * Configura le mailbox in ricezione/trasmissione
+    */
     ECanaShadow.CANMD.all = ECanaRegs.CANMD.all;
-    // ECanaShadow.CANMD.bit.MD2 = 1;
     if (msgType==CAN_MSG_OBJ_TYPE_RX)
-        ECanaShadow.CANMD.all |= 1 << objID;
+        ECanaShadow.CANMD.all |= (1ul << objID);
     else
-        ECanaShadow.CANMD.all &= ~(1 << objID);
+        ECanaShadow.CANMD.all &= ~(1ul << objID);
     ECanaRegs.CANMD.all = ECanaShadow.CANMD.all;
 
-    ECanaShadow.CANME.all = ECanaRegs.CANME.all;
-    // ECanaShadow.CANME.bit.ME2 = 1;
-    ECanaShadow.CANME.all |= 1 << objID;
-    ECanaRegs.CANME.all = ECanaShadow.CANME.all;
+    /**
+    * Configura la lunghezza dei messaggi in byte.
+    */
     mboxes[objID].MSGCTRL.bit.DLC = msgLen;
+
+    /**
+    * Abilita le mailbox.
+    */
+    ECanaShadow.CANME.all = ECanaRegs.CANME.all;
+    ECanaShadow.CANME.all |= (1ul << objID);
+    ECanaRegs.CANME.all = ECanaShadow.CANME.all;
+
+    /**
+    * Configura le interruzioni
+    */
+    EALLOW;
+
+    /**
+    * Configura quali mailbox generano le interruzioni.
+    */
+    if (msgType==CAN_MSG_OBJ_TYPE_RX) {
+        ECanaRegs.CANMIM.all = ECanaRegs.CANMIM.all | (1ul << objID);
+    }
+
+    /**
+    * Mappa le interruzioni sulle linee 0 e 1.
+    * Le mailbox in rx generano le interruzioni su ECANINT1.
+    */
+    if (msgType==CAN_MSG_OBJ_TYPE_RX) {
+        ECanaRegs.CANMIL.all = ECanaRegs.CANMIL.all | (1ul << objID);
+    }
+
+    EDIS;
 #endif
 }
 
@@ -664,7 +703,23 @@ CAN_sendMessage(uint32_t base, uint32_t objID, uint16_t msgLen,
                                      (uint32_t)CAN_IF1CMD_TXRQST |
                                      (objID & CAN_IF1CMD_MSG_NUM_M));
 #else
-//#error "TO BE IMPLEMENTED"
+    volatile struct MBOX *mboxes = &ECanaMboxes.MBOX0;
+    struct ECAN_REGS ECanaShadow;
+
+    objID--;
+
+    mboxes[objID].MDL.byte.BYTE0 = msgData[0];
+    mboxes[objID].MDL.byte.BYTE1 = msgData[1];
+    mboxes[objID].MDL.byte.BYTE2 = msgData[2];
+    mboxes[objID].MDL.byte.BYTE3 = msgData[3];
+    mboxes[objID].MDH.byte.BYTE4 = msgData[4];
+    mboxes[objID].MDH.byte.BYTE5 = msgData[5];
+    mboxes[objID].MDH.byte.BYTE6 = msgData[6];
+    mboxes[objID].MDH.byte.BYTE7 = msgData[7];
+
+    ECanaShadow.CANTRS.all = 1ul << objID;
+    ECanaRegs.CANTRS.all = ECanaShadow.CANTRS.all;
+
 #endif
 }
 
@@ -677,7 +732,7 @@ bool
 CAN_readMessage(uint32_t base, uint32_t objID,
                 uint16_t *msgData)
 {
-    bool status=true;
+    __attribute__((unused)) bool status=true;
 
     //
     // Check the arguments.
@@ -743,7 +798,15 @@ CAN_readMessage(uint32_t base, uint32_t objID,
     }
 
 #else
-//#error "TO BE IMPLEMENTED"
+    volatile struct MBOX *mboxes = &ECanaMboxes.MBOX0;
+
+    objID--;
+
+    msgData[0] = mboxes[objID].MDL.word.LOW_WORD;
+    msgData[1] = mboxes[objID].MDL.word.HI_WORD;
+    msgData[2] = mboxes[objID].MDH.word.LOW_WORD;
+    msgData[3] = mboxes[objID].MDH.word.HI_WORD;
+
     return(status);
 #endif
 }
@@ -754,7 +817,7 @@ bool CAN_readMessageWithID(uint32_t base,
                            uint32_t *msgID,
                            uint16_t *msgData)
 {
-    bool status=true;
+    __attribute__((unused)) bool status=true;
 
 
     //
@@ -788,7 +851,7 @@ bool CAN_readMessageWithID(uint32_t base,
         }
     }
 #else
-//#error "TO BE IMPLEMENTED"
+    ASSERT(false); // "TO BE IMPLEMENTED"
 #endif
     return(status);
 }
@@ -842,7 +905,7 @@ CAN_transferMessage(uint32_t base, uint16_t interface, uint32_t objID,
     {
     }
 #else
-//#error "TO BE IMPLEMENTED"
+    ASSERT(false); // "TO BE IMPLEMENTED"
 #endif
 }
 
@@ -881,6 +944,6 @@ CAN_clearMessage(uint32_t base, uint32_t objID)
     (((uint32_t)CAN_IF1CMD_DIR | (uint32_t)CAN_IF1CMD_ARB) |
      (objID & CAN_IF1CMD_MSG_NUM_M));
 #else
-//#error "TO BE IMPLEMENTED"
+    ASSERT(false); // "TO BE IMPLEMENTED"
 #endif
 }

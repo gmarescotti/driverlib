@@ -42,6 +42,11 @@
 #ifndef CAN_H
 #define CAN_H
 
+#ifdef __TMS320C2000__
+#undef EALLOW
+#undef EDIS
+#include "F2806x_Device.h"
+#endif
 
 //*****************************************************************************
 //
@@ -343,6 +348,7 @@ static inline void
 CAN_writeDataReg(const uint16_t *const data, uint32_t address,
                  uint32_t size)
 {
+#ifndef __TMS320C2000__
     uint32_t idx;
     uint32_t dataReg = address;
 
@@ -361,6 +367,9 @@ CAN_writeDataReg(const uint16_t *const data, uint32_t address,
             dataReg++;
         }
     }
+#else
+    ASSERT(false);
+#endif
 }
 
 //*****************************************************************************
@@ -387,6 +396,7 @@ CAN_writeDataReg(const uint16_t *const data, uint32_t address,
 static inline void
 CAN_readDataReg(uint16_t *data, const uint32_t address, uint32_t size)
 {
+#ifndef __TMS320C2000__
     uint32_t idx;
     uint32_t dataReg = address;
 
@@ -402,6 +412,9 @@ CAN_readDataReg(uint16_t *data, const uint32_t address, uint32_t size)
 
         dataReg++;
     }
+#else
+    ASSERT(false);
+#endif
 }
 
 //*****************************************************************************
@@ -423,6 +436,7 @@ CAN_initRAM(uint32_t base)
     //
     ASSERT(CAN_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     HWREGH(base + CAN_O_RAM_INIT) = CAN_RAM_INIT_CAN_RAM_INIT |
                                     CAN_RAM_INIT_KEY;
 
@@ -434,6 +448,9 @@ CAN_initRAM(uint32_t base)
         // Wait until RAM Init is complete
         //
     }
+#else
+    ASSERT(false);
+#endif
 }
 
 //*****************************************************************************
@@ -466,6 +483,7 @@ CAN_selectClockSource(uint32_t base, CAN_ClockSource source)
     //
     EALLOW;
 
+#ifndef __TMS320C2000__
     switch(base)
     {
         case CANA_BASE:
@@ -492,6 +510,9 @@ CAN_selectClockSource(uint32_t base, CAN_ClockSource source)
             break;
     }
 
+#else
+    ASSERT(false);
+#endif
     EDIS;
 }
 
@@ -517,10 +538,14 @@ CAN_startModule(uint32_t base)
     //
     ASSERT(CAN_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Clear Init and CCE bits
     //
     HWREGH(base + CAN_O_CTL) &= ~(CAN_CTL_INIT | CAN_CTL_CCE);
+#else
+    // TODO
+#endif
 }
 
 //*****************************************************************************
@@ -545,10 +570,14 @@ CAN_enableController(uint32_t base)
     //
     ASSERT(CAN_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Clear the init bit in the control register.
     //
     HWREGH(base + CAN_O_CTL) &= ~CAN_CTL_INIT;
+#else
+    ASSERT(false);
+#endif
 }
 
 //*****************************************************************************
@@ -574,10 +603,14 @@ CAN_disableController(uint32_t base)
     //
     ASSERT(CAN_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Set the init bit in the control register.
     //
     HWREGH(base + CAN_O_CTL) |= CAN_CTL_INIT;
+#else
+    ASSERT(false);
+#endif
 }
 
 //*****************************************************************************
@@ -609,6 +642,7 @@ CAN_enableTestMode(uint32_t base, uint16_t mode)
     ASSERT((mode & (CAN_TEST_LBACK | CAN_TEST_EXL)) !=
            (CAN_TEST_LBACK | CAN_TEST_EXL));
 
+#ifndef __TMS320C2000__
     //
     // Clear the bits in the test register.
     //
@@ -621,6 +655,9 @@ CAN_enableTestMode(uint32_t base, uint16_t mode)
     //
     HWREGH(base + CAN_O_CTL) |= CAN_CTL_TEST;
     HWREGH(base + CAN_O_TEST) |= mode;
+#else
+    ASSERT(false);
+#endif
 }
 
 //*****************************************************************************
@@ -642,6 +679,7 @@ CAN_disableTestMode(uint32_t base)
     //
     ASSERT(CAN_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Clear the bits in the test register.
     //
@@ -653,6 +691,9 @@ CAN_disableTestMode(uint32_t base)
     // Clear the test mode enable bit
     //
     HWREGH(base + CAN_O_CTL) &= ~CAN_CTL_TEST;
+#else
+    ASSERT(false);
+#endif
 }
 
 //*****************************************************************************
@@ -675,10 +716,15 @@ CAN_getBitTiming(uint32_t base)
     //
     ASSERT(CAN_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Read and return BTR register
     //
     return(HWREG_BP(base + CAN_O_BTR));
+#else
+    ASSERT(false);
+    return 0;
+#endif
 }
 
 //*****************************************************************************
@@ -702,10 +748,14 @@ CAN_enableMemoryAccessMode(uint32_t base)
     //
     ASSERT(CAN_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Set the RAM direct access bit
     //
     HWREGH(base + CAN_O_TEST) |= CAN_TEST_RDA;
+#else
+    ASSERT(false);
+#endif
 }
 
 //*****************************************************************************
@@ -727,10 +777,14 @@ CAN_disableMemoryAccessMode(uint32_t base)
     //
     ASSERT(CAN_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Clear the RAM direct access bit
     //
     HWREGH(base + CAN_O_TEST) &= ~CAN_TEST_RDA;
+#else
+    ASSERT(false);
+#endif
 }
 
 //*****************************************************************************
@@ -757,6 +811,7 @@ CAN_setInterruptionDebugMode(uint32_t base, bool enable)
     //
     ASSERT(CAN_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     if(enable)
     {
         //
@@ -771,6 +826,9 @@ CAN_setInterruptionDebugMode(uint32_t base, bool enable)
         //
         HWREGH(base + CAN_O_CTL) &= ~CAN_CTL_IDS;
     }
+#else
+    ASSERT(false);
+#endif
 }
 
 //*****************************************************************************
@@ -794,11 +852,15 @@ CAN_enableDMARequests(uint32_t base)
     //
     ASSERT(CAN_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Set the DMA enable bits in the control register.
     //
     HWREG_BP(base + CAN_O_CTL) |=
     (CAN_CTL_DE1 | (uint32_t)CAN_CTL_DE2 | (uint32_t)CAN_CTL_DE3);
+#else
+    ASSERT(false);
+#endif
 }
 
 //*****************************************************************************
@@ -821,11 +883,15 @@ CAN_disableDMARequests(uint32_t base)
     //
     ASSERT(CAN_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Clear the DMA enable bits in the control register.
     //
     HWREG_BP(base + CAN_O_CTL) &=
     ~(CAN_CTL_DE1 | (uint32_t)CAN_CTL_DE2 | (uint32_t)CAN_CTL_DE3);
+#else
+    ASSERT(false);
+#endif
 }
 
 //*****************************************************************************
@@ -847,10 +913,14 @@ CAN_disableAutoBusOn(uint32_t base)
     //
     ASSERT(CAN_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Clear the ABO bit in the control register.
     //
     HWREGH(base + CAN_O_CTL) &= ~CAN_CTL_ABO;
+#else
+    ASSERT(false);
+#endif
 }
 
 //*****************************************************************************
@@ -873,10 +943,14 @@ CAN_enableAutoBusOn(uint32_t base)
     //
     ASSERT(CAN_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Set the ABO bit in the control register.
     //
     HWREGH(base + CAN_O_CTL) |= CAN_CTL_ABO;
+#else
+    ASSERT(false);
+#endif
 }
 
 //*****************************************************************************
@@ -903,10 +977,14 @@ CAN_setAutoBusOnTime(uint32_t base, uint32_t time)
     //
     ASSERT(CAN_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Set bus-off timer value
     //
     HWREG_BP(base + CAN_O_ABOTR) = time;
+#else
+    ASSERT(false);
+#endif
 }
 
 //*****************************************************************************
@@ -941,10 +1019,32 @@ CAN_enableInterrupt(uint32_t base, uint32_t intFlags)
     ASSERT((intFlags & ~(CAN_INT_ERROR | CAN_INT_STATUS | CAN_INT_IE0 |
                          CAN_INT_IE1)) == 0U);
 
+#ifndef __TMS320C2000__
     //
     // Enable the specified interrupts.
     //
     HWREG_BP(base + CAN_O_CTL) |= intFlags;
+#else
+    struct ECAN_REGS ECanShadow;
+
+    EALLOW;
+
+    /**
+    * Abilita le interruzioni su ECANINT1 e abilita le interruzioni
+    */
+    ECanShadow.CANGIM.all = 0;
+//    ECanShadow.CANGIM.bit.GIL = 1;                  //!< All global interrupts are mapped to the ECAN1INT interrupt line.
+//    ECanShadow.CANGIM.bit.I1EN = 1;
+    // ECanShadow.CANGIM.all = intFlags;
+    if (intFlags & CAN_INT_IE0) ECanShadow.CANGIM.bit.I0EN = 1;
+    if (intFlags & CAN_INT_IE1) ECanShadow.CANGIM.bit.I1EN = 1;
+    if (intFlags & CAN_INT_STATUS) ECanShadow.CANGIM.bit.GIL = 1;
+    if (intFlags & CAN_INT_ERROR) ECanShadow.CANGIM.bit.EPIM = 1;
+    ECanaRegs.CANGIM.all = ECanShadow.CANGIM.all;
+
+    EDIS;
+
+#endif
 }
 
 //*****************************************************************************
@@ -973,10 +1073,14 @@ CAN_disableInterrupt(uint32_t base, uint32_t intFlags)
     ASSERT((intFlags & ~(CAN_INT_ERROR | CAN_INT_STATUS | CAN_INT_IE0 |
                          CAN_INT_IE1)) == 0U);
 
+#ifndef __TMS320C2000__
     //
     // Disable the specified interrupts.
     //
     HWREG_BP(base + CAN_O_CTL) &= ~(intFlags);
+#else
+    ASSERT(false);
+#endif
 }
 
 //*****************************************************************************
@@ -1003,10 +1107,15 @@ CAN_getInterruptMux(uint32_t base)
     //
     ASSERT(CAN_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Get the interrupt muxing for the CAN peripheral
     //
     return(HWREG_BP(base + CAN_O_IP_MUX21));
+#else
+    ASSERT(false);
+    return 0;
+#endif
 }
 
 //*****************************************************************************
@@ -1035,10 +1144,14 @@ CAN_setInterruptMux(uint32_t base, uint32_t mux)
     //
     ASSERT(CAN_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Set the interrupt muxing for the CAN peripheral
     //
     HWREG_BP(base + CAN_O_IP_MUX21) = mux;
+#else
+    ASSERT(false);
+#endif
 }
 
 //*****************************************************************************
@@ -1060,12 +1173,16 @@ CAN_enableRetry(uint32_t base)
     //
     ASSERT(CAN_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Clearing the DAR bit tells the controller to not disable the
     // auto-retry of messages which were not transmitted or received
     // correctly.
     //
     HWREGH(base + CAN_O_CTL) &= ~CAN_CTL_DAR;
+#else
+    ASSERT(false);
+#endif
 }
 
 //*****************************************************************************
@@ -1087,11 +1204,15 @@ CAN_disableRetry(uint32_t base)
     //
     ASSERT(CAN_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Setting the DAR bit tells the controller to disable the auto-retry
     // of messages which were not transmitted or received correctly.
     //
     HWREGH(base + CAN_O_CTL) |= CAN_CTL_DAR;
+#else
+    ASSERT(false);
+#endif
 }
 
 //*****************************************************************************
@@ -1115,10 +1236,15 @@ CAN_isRetryEnabled(uint32_t base)
     //
     ASSERT(CAN_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Read the disable automatic retry setting from the CAN controller.
     //
     return((bool)((HWREGH(base + CAN_O_CTL) & CAN_CTL_DAR) != CAN_CTL_DAR));
+#else
+    ASSERT(false);
+    return 0;
+#endif
 }
 
 //*****************************************************************************
@@ -1181,6 +1307,7 @@ CAN_getErrorCount(uint32_t base, uint32_t *rxCount, uint32_t *txCount)
 static inline uint16_t
 CAN_getStatus(uint32_t base)
 {
+#ifndef __TMS320C2000__
     //
     // Check the arguments.
     //
@@ -1190,6 +1317,10 @@ CAN_getStatus(uint32_t base)
     // Return error and status register value
     //
     return(HWREGH(base + CAN_O_ES));
+#else
+    ASSERT(false);
+    return 0;
+#endif
 }
 
 //*****************************************************************************
@@ -1206,6 +1337,7 @@ CAN_getStatus(uint32_t base)
 static inline uint32_t
 CAN_getTxRequests(uint32_t base)
 {
+#ifndef __TMS320C2000__
     //
     // Check the arguments.
     //
@@ -1215,6 +1347,10 @@ CAN_getTxRequests(uint32_t base)
     // Return Tx requests register value
     //
     return(HWREG_BP(base + CAN_O_TXRQ_21));
+#else
+    ASSERT(false);
+    return 0;
+#endif
 }
 
 //*****************************************************************************
@@ -1232,6 +1368,7 @@ CAN_getTxRequests(uint32_t base)
 static inline uint32_t
 CAN_getNewDataFlags(uint32_t base)
 {
+#ifndef __TMS320C2000__
     //
     // Check the arguments.
     //
@@ -1241,6 +1378,10 @@ CAN_getNewDataFlags(uint32_t base)
     // Return new data register value
     //
     return(HWREG_BP(base + CAN_O_NDAT_21));
+#else
+    ASSERT(false);
+    return 0;
+#endif
 }
 
 //*****************************************************************************
@@ -1257,6 +1398,7 @@ CAN_getNewDataFlags(uint32_t base)
 static inline uint32_t
 CAN_getValidMessageObjects(uint32_t base)
 {
+#ifndef __TMS320C2000__
     //
     // Check the arguments.
     //
@@ -1266,6 +1408,10 @@ CAN_getValidMessageObjects(uint32_t base)
     // Return the valid message register value
     //
     return(HWREG_BP(base + CAN_O_MVAL_21));
+#else
+    ASSERT(false);
+    return 0;
+#endif
 }
 
 //*****************************************************************************
@@ -1287,11 +1433,18 @@ CAN_getInterruptCause(uint32_t base)
     // Check the arguments.
     //
     ASSERT(CAN_isBaseValid(base));
-
+#ifndef __TMS320C2000__
     //
     // Read interrupt identifier status
     //
     return(HWREG_BP(base + CAN_O_INT));
+#else
+    uint32_t objID = ECanaRegs.CANGIF1.bit.MIV1;
+    objID ++;
+    return objID;
+
+    // return CAN_INT_INT0ID_STATUS;
+#endif
 }
 
 //*****************************************************************************
@@ -1309,6 +1462,7 @@ CAN_getInterruptCause(uint32_t base)
 static inline uint32_t
 CAN_getInterruptMessageSource(uint32_t base)
 {
+#ifndef __TMS320C2000__
     //
     // Check the arguments.
     //
@@ -1318,6 +1472,10 @@ CAN_getInterruptMessageSource(uint32_t base)
     // Read message object interrupt status
     //
     return(HWREG_BP(base + CAN_O_IPEN_21));
+#else
+    ASSERT(false);
+    return 0;
+#endif
 }
 
 //*****************************************************************************
@@ -1346,10 +1504,23 @@ CAN_enableGlobalInterrupt(uint32_t base, uint16_t intFlags)
     ASSERT((intFlags & ~(CAN_GLOBAL_INT_CANINT0 |
                          CAN_GLOBAL_INT_CANINT1)) == 0U);
 
+#ifndef __TMS320C2000__
     //
     // Enable the requested interrupts
     //
     HWREGH(base + CAN_O_GLB_INT_EN) |= intFlags;
+#else
+    /**
+    * Setta la maschera delle interruzioni nell'interrupt
+    * expansion register.
+    */
+    PieCtrlRegs.PIEIER9.bit.INTx6 = 1;          // Enable INT 9.6 in the PIE (rx CAN1A)
+
+    /**
+    * Abilita nella CPU la interruzione INT9.
+    */
+    IER |=  M_INT9;
+#endif
 }
 
 //*****************************************************************************
@@ -1371,6 +1542,7 @@ CAN_enableGlobalInterrupt(uint32_t base, uint16_t intFlags)
 static inline void
 CAN_disableGlobalInterrupt(uint32_t base, uint16_t intFlags)
 {
+#ifndef __TMS320C2000__
     //
     // Check the arguments.
     //
@@ -1382,6 +1554,9 @@ CAN_disableGlobalInterrupt(uint32_t base, uint16_t intFlags)
     // Disable the requested interrupts
     //
     HWREGH(base + CAN_O_GLB_INT_EN) &= ~intFlags;
+#else
+    ASSERT(false);
+#endif
 }
 
 //*****************************************************************************
@@ -1409,11 +1584,18 @@ CAN_clearGlobalInterruptStatus(uint32_t base, uint16_t intFlags)
     ASSERT(CAN_isBaseValid(base));
     ASSERT((intFlags & ~(CAN_GLOBAL_INT_CANINT0 |
                          CAN_GLOBAL_INT_CANINT1)) == 0U);
-
+#ifndef __TMS320C2000__
     //
     // Clear the requested interrupts
     //
     HWREGH(base + CAN_O_GLB_INT_CLR) |= intFlags;
+#else
+    /**
+    * Effettua il clear di tutti i
+    * flag.
+    */
+    ECanaRegs.CANGIF1.all = 0xFFFF;
+#endif
 }
 
 //*****************************************************************************
@@ -1436,6 +1618,7 @@ CAN_clearGlobalInterruptStatus(uint32_t base, uint16_t intFlags)
 static inline bool
 CAN_getGlobalInterruptStatus(uint32_t base, uint16_t intFlags)
 {
+#ifndef __TMS320C2000__
     //
     // Check the arguments.
     //
@@ -1447,6 +1630,10 @@ CAN_getGlobalInterruptStatus(uint32_t base, uint16_t intFlags)
     // Read and return the global interrupt flag register
     //
     return((bool)((HWREGH(base + CAN_O_GLB_INT_FLG) & intFlags) != 0U));
+#else
+    ASSERT(false);
+    return false;
+#endif
 }
 
 //*****************************************************************************
