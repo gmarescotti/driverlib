@@ -330,6 +330,7 @@ Interrupt_register(uint32_t interruptNumber, void (*handler)(void))
         break;
     default:
         ASSERT(false);
+        break;
     }
     PieCtrlRegs.PIEIER9.bit.INTx6 = 1;  //!< Enable INT 9.6 in the PIE (rx CAN1A)
     EDIS;
