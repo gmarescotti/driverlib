@@ -65,6 +65,12 @@ extern "C"
 #undef EALLOW
 #undef EDIS
 #include "F2806x_Device.h"
+#ifndef EALLOW
+#define  EALLOW __asm(" EALLOW")
+#endif
+#ifndef EDIS
+#define  EDIS   __asm(" EDIS")
+#endif
 #endif
 
 #include <stdbool.h>
