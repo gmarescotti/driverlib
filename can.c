@@ -561,8 +561,6 @@ CAN_setupMessageObject(uint32_t base, uint32_t objID, uint32_t msgID,
     ASSERT((objID <= 32U) && (objID > 0U));
     ASSERT(msgLen <= 8U);
 
-    struct ECAN_REGS ECanaShadow;
-
     volatile struct MBOX *mboxes = &ECanaMboxes.MBOX0;
 
     objID--;
@@ -585,12 +583,10 @@ CAN_setupMessageObject(uint32_t base, uint32_t objID, uint32_t msgID,
     /**
     * Configura le mailbox in ricezione/trasmissione
     */
-    ECanaShadow.CANMD.all = ECanaRegs.CANMD.all;
     if (msgType==CAN_MSG_OBJ_TYPE_RX)
-        ECanaShadow.CANMD.all |= (1ul << objID);
+        ECanaRegs.CANMD.all |= (1ul << objID);
     else
-        ECanaShadow.CANMD.all &= ~(1ul << objID);
-    ECanaRegs.CANMD.all = ECanaShadow.CANMD.all;
+        ECanaRegs.CANMD.all &= ~(1ul << objID);
 
     /**
     * Configura la lunghezza dei messaggi in byte.
@@ -600,9 +596,7 @@ CAN_setupMessageObject(uint32_t base, uint32_t objID, uint32_t msgID,
     /**
     * Abilita le mailbox.
     */
-    ECanaShadow.CANME.all = ECanaRegs.CANME.all;
-    ECanaShadow.CANME.all |= (1ul << objID);
-    ECanaRegs.CANME.all = ECanaShadow.CANME.all;
+    ECanaRegs.CANME.all |= (1ul << objID);
 
     /**
     * Configura le interruzioni
@@ -613,7 +607,7 @@ CAN_setupMessageObject(uint32_t base, uint32_t objID, uint32_t msgID,
     * Configura quali mailbox generano le interruzioni.
     */
     if (msgType==CAN_MSG_OBJ_TYPE_RX) {
-        ECanaRegs.CANMIM.all = ECanaRegs.CANMIM.all | (1ul << objID);
+        ECanaRegs.CANMIM.all |= 1ul << objID;
     }
 
     /**
@@ -621,7 +615,7 @@ CAN_setupMessageObject(uint32_t base, uint32_t objID, uint32_t msgID,
     * Le mailbox in rx generano le interruzioni su ECANINT1.
     */
     if (msgType==CAN_MSG_OBJ_TYPE_RX) {
-        ECanaRegs.CANMIL.all = ECanaRegs.CANMIL.all | (1ul << objID);
+        ECanaRegs.CANMIL.all |= 1ul << objID;
     }
 
     EDIS;

@@ -230,6 +230,7 @@
 #define GPIO_21_SPIB_SOMI               0x00080A06U
 #define GPIO_21_SD1_C3                  0x00080A07U
 
+#define GPIO_22_GPIO22                  0x00080C00U
 #define GPIO_22_GPIO22_VFBSW            0x00080C00U
 #define GPIO_22_EQEP1_STROBE            0x00080C01U
 #define GPIO_22_SCIB_TX                 0x00080C03U
