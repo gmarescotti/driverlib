@@ -137,11 +137,12 @@ extern "C"
 // This function is called in SysCtl_resetPeripheral after resetting
 // analog peripherals
 //
-#ifdef TMS0049 // GGG
+#ifndef __TMS320C2000__
 #define Device_cal ((void (*)(void))((uintptr_t)0x070282))
 #else
 #undef Device_cal
-#define Device_cal() // (void (*)(void))(uintptr_t)0x3D7C80
+// #define Device_cal() // (void (*)(void))(uintptr_t)0x3D7C80
+#define Device_cal ((void (*)(void))0x3D7C80)
 #endif
 
 //*****************************************************************************
@@ -2977,6 +2978,12 @@ SysCtl_getDeviceParametric(SysCtl_DeviceParametric parametric);
 // Mark the end of the C bindings section for C++ compilers.
 //
 //*****************************************************************************
+
+#ifdef __TMS320C2000__
+#undef Device_cal
+#define Device_cal (void   (*)(void))0x3D7C80 // restore original value
+#endif
+
 #ifdef __cplusplus
 }
 #endif
