@@ -48,6 +48,7 @@
 // The following are defines for the EPWM register offsets
 //
 //*************************************************************************************************
+#ifndef __TMS320C2000__
 #define EPWM_O_TBCTL          0x0U    // Time Base Control Register
 #define EPWM_O_TBCTL2         0x1U    // Time Base Control Register 2
 #define EPWM_O_TBCTR          0x4U    // Time Base Counter Register
@@ -133,6 +134,61 @@
 #define EPWM_O_HWVDELVAL      0xFDU   // Hardware Valley Mode Delay Register
 #define EPWM_O_VCNTVAL        0xFEU   // Hardware Valley Counter Register
 
+#else
+#define EPWM_O_TBCTL          0x0U   // Time Base Control Register
+#define EPWM_O_TBSTS          0x1U   // Time Base Status Register
+#define EPWM_O_TBPHS          0x2U   // Time Base Phase High
+#define EPWM_O_TBCTR          0x4U   // Time Base Counter Register
+#define EPWM_O_TBPRD          0x5U   // Time Base Period Register
+#define EPWM_O_TBPRDHR        0x6U   // Time Base Period High Resolution Register
+#define EPWM_O_CMPCTL         0x7U   // Counter Compare Control Register
+#define EPWM_O_CMPA           0x8U   // uint32: Counter Compare A Register
+#define EPWM_O_CMPB           0xAU   // Compare B Register
+#define EPWM_O_AQCTLA         0xBU   // Action Qualifier Control Register For Output A
+#define EPWM_O_AQCTLB         0xCU   // Action Qualifier Control Register For Output B
+#define EPWM_O_AQSFRC         0xDU   // Action Qualifier Software Force Register
+#define EPWM_O_AQCSFRC        0xEU   // Action Qualifier Continuous S/W Force Register
+#define EPWM_O_DBCTL          0xFU    // Dead-Band Generator Control Register
+#define EPWM_O_DBRED          0x10U   // Dead-Band Generator Rising Edge Delay High Resolution
+#define EPWM_O_DBFED          0x11U   // Dead-Band Generator Falling Edge Delay Count Register
+#define EPWM_O_TZSEL          0x12U   // Trip Zone Select Register
+#define EPWM_O_TZDCSEL        0x13U   // Trip Zone Digital Comparator Select Register
+#define EPWM_O_TZCTL          0x14U   // Trip Zone Control Register
+#define EPWM_O_TZEINT         0x15U   // Trip Zone Enable Interrupt Register
+#define EPWM_O_TZFLG          0x16U   // Trip Zone Flag Register
+#define EPWM_O_TZCLR          0x17U   // Trip Zone Clear Register
+#define EPWM_O_TZFRC          0x18U   // Trip Zone Force Register
+#define EPWM_O_ETSEL          0x19U   // Event Trigger Selection Register
+#define EPWM_O_ETPS           0x1AU   // Event Trigger Pre-Scale Register
+#define EPWM_O_ETFLG          0x1BU   // Event Trigger Flag Register
+#define EPWM_O_ETCLR          0x1CU   // Event Trigger Clear Register
+#define EPWM_O_ETFRC          0x1DU   // Event Trigger Force Register
+#define EPWM_O_PCCTL          0x1EU   // PWM Chopper Control Register
+#define _rsvd1                0x1FU   // Reserved
+#define EPWM_O_HRCNFG         0x20U   // HRPWM Configuration Register
+#define EPWM_O_HRPWR          0x21U   // HRPWM Power Register
+#define _rsvd2                0x22U  // Reserved
+#define _rsvd3                0x23U  // Reserved
+#define _rsvd4                0x24U  // Reserved
+#define _rsvd5                0x25U  // Reserved
+#define EPWM_O_HRMSTEP        0x26U   // HRPWM MEP Step Register
+#define _rsvd6                0x27U  // Reserved
+#define EPWM_O_HRPCTL         0x28U   // High Resolution Period Control Register
+#define _rsvd7                0x29U  // Reserved
+#define EPWM_O_TBPRDMM        0x2AU   // ??Time Base Period Register
+#define EPWM_O_CMPAMMM        0x2CU   // ??Counter Compare A Register
+#define _rsvd8                0x2EU  // Reserved
+#define EPWM_O_DCTRIPSEL      0x30U   // Digital Compare Trip Select Register
+#define EPWM_O_DCACTL         0x31U   // Digital Compare A Control Register
+#define EPWM_O_DCBCTL         0x32U   // Digital Compare B Control Register
+#define EPWM_O_DCFCTL         0x33U   // Digital Compare Filter Control Register
+#define EPWM_O_DCCAPCTL       0x34U   // Digital Compare Capture Control Register
+#define EPWM_O_DCFOFFSET      0x35U   // Digital Compare Filter Offset Register
+#define EPWM_O_DCFOFFSETCNT   0x36U   // Digital Compare Filter Offset Counter Register
+#define EPWM_O_DCFWINDOW      0x37U   // Digital Compare Filter Window Register
+#define EPWM_O_DCFWINDOWCNT   0x38U   // Digital Compare Filter Window Counter Register
+#define EPWM_O_DCCAP          0x39U   // Digital Compare Counter Capture Register
+#endif
 
 //*************************************************************************************************
 //

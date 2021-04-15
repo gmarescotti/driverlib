@@ -86,6 +86,7 @@
 #define CLB4_LOGICCFG_BASE        0x00003C00U
 #define CLB4_LOGICCTL_BASE        0x00003D00U
 #define CLB4_DATAEXCH_BASE        0x00003E00U
+#ifndef __TMS320C2000__
 #define EPWM1_BASE                0x00004000U
 #define EPWM2_BASE                0x00004100U
 #define EPWM3_BASE                0x00004200U
@@ -94,6 +95,16 @@
 #define EPWM6_BASE                0x00004500U
 #define EPWM7_BASE                0x00004600U
 #define EPWM8_BASE                0x00004700U
+#else
+#define EPWM1_BASE                0x00006800U
+#define EPWM2_BASE                0x00006840U
+#define EPWM3_BASE                0x00006880U
+#define EPWM4_BASE                0x000068C0U
+#define EPWM5_BASE                0x00006900U
+#define EPWM6_BASE                0x00006940U
+#define EPWM7_BASE                0x00006980U
+#define EPWM8_BASE                0x000069C0U
+#endif
 #define EQEP1_BASE                0x00005100U
 #define EQEP2_BASE                0x00005140U
 #define ECAP1_BASE                0x00005200U

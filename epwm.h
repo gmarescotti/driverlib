@@ -524,7 +524,11 @@ typedef enum
 typedef enum
 {
     EPWM_AQ_OUTPUT_A = 0, //!< ePWMxA output
+#ifndef __TMS320C2000__
     EPWM_AQ_OUTPUT_B = 2  //!< ePWMxB output
+#else
+    EPWM_AQ_OUTPUT_B = 1  //!< ePWMxB output for F2806x
+#endif
 } EPWM_ActionQualifierOutputModule;
 
 //*****************************************************************************
@@ -1701,6 +1705,7 @@ EPWM_setSyncOutPulseMode(uint32_t base, EPWM_SyncOutPulseMode mode)
     //
     else
     {
+#ifndef __TMS320C2000__
         //
         // Write 0x3 to SYNCOSEL to enable selection from SYNCOSELX
         //
@@ -1713,6 +1718,9 @@ EPWM_setSyncOutPulseMode(uint32_t base, EPWM_SyncOutPulseMode mode)
         HWREGH(base + EPWM_O_TBCTL2) =
                ((HWREGH(base + EPWM_O_TBCTL2) & ~(EPWM_TBCTL2_SYNCOSELX_M)) |
                 (((uint16_t)mode & 0x3U) << EPWM_TBCTL2_SYNCOSELX_S));
+#else
+    ASSERT(false); // mode not available on TMS320F2806x
+#endif
     }
 }
 
@@ -1868,13 +1876,16 @@ EPWM_selectPeriodLoadEvent(uint32_t base,
     // Check the arguments
     //
     ASSERT(EPWM_isBaseValid(base));
-
+#ifndef __TMS320C2000__
     //
     // Write to PRDLDSYNC bit
     //
     HWREGH(base + EPWM_O_TBCTL2) =
                 ((HWREGH(base + EPWM_O_TBCTL2) & ~(EPWM_TBCTL2_PRDLDSYNC_M)) |
                  ((uint16_t)shadowLoadMode << EPWM_TBCTL2_PRDLDSYNC_S));
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 //*****************************************************************************
 //
@@ -1895,10 +1906,14 @@ EPWM_enableOneShotSync(uint32_t base)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Set OSHTSYNCMODE bit
     //
     HWREGH(base + EPWM_O_TBCTL2) |= EPWM_TBCTL2_OSHTSYNCMODE;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -1920,10 +1935,14 @@ EPWM_disableOneShotSync(uint32_t base)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Clear OSHTSYNCMODE bit
     //
     HWREGH(base + EPWM_O_TBCTL2) &= ~EPWM_TBCTL2_OSHTSYNCMODE;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -1945,10 +1964,14 @@ EPWM_startOneShotSync(uint32_t base)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Set OSHTSYNC bit
     //
     HWREGH(base + EPWM_O_TBCTL2) |= EPWM_TBCTL2_OSHTSYNC;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -2131,6 +2154,7 @@ EPWM_setPhaseShift(uint32_t base, uint16_t phaseCount)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Write to TBPHS bit
     //
@@ -2138,6 +2162,9 @@ EPWM_setPhaseShift(uint32_t base, uint16_t phaseCount)
                    ((HWREG(base + EPWM_O_TBPHS) &
                     ~((uint32_t)EPWM_TBPHS_TBPHS_M)) |
                     ((uint32_t)phaseCount << EPWM_TBPHS_TBPHS_S));
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -2242,12 +2269,16 @@ EPWM_setupEPWMLinks(uint32_t base, EPWM_CurrentLink epwmLink,
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Configure EPWM links
     //
     HWREG(base + EPWM_O_XLINK) =
               ((HWREG(base + EPWM_O_XLINK) & ~((uint32_t)0xFU << linkComp)) |
                ((uint32_t)epwmLink << linkComp));
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -2424,7 +2455,11 @@ EPWM_setCounterCompareValue(uint32_t base, EPWM_CounterCompareModule compModule,
         //
         // Write to COMPA or COMPB bits
         //
+#ifndef __TMS320C2000__
         HWREGH(base + registerOffset + 0x1U) = compCount;
+#else
+        HWREGH(base + registerOffset + (compModule == EPWM_COUNTER_COMPARE_A ? 0x1U : 0x0U)) = compCount;
+#endif
     }
     else
     {
@@ -2561,6 +2596,7 @@ EPWM_setActionQualifierShadowLoadMode(uint32_t base,
                                       EPWM_ActionQualifierModule aqModule,
                                       EPWM_ActionQualifierLoadMode loadMode)
 {
+#ifndef __TMS320C2000__
     uint16_t syncModeOffset;
     uint16_t shadowModeOffset;
 
@@ -2583,6 +2619,9 @@ EPWM_setActionQualifierShadowLoadMode(uint32_t base,
                                    ((((uint16_t)loadMode >> 2U) <<
                                      syncModeOffset) | (((uint16_t)loadMode &
                                     0x3U) << (uint16_t)aqModule)));
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -2605,6 +2644,7 @@ static inline void
 EPWM_disableActionQualifierShadowLoadMode(uint32_t base,
                                           EPWM_ActionQualifierModule aqModule)
 {
+#ifndef __TMS320C2000__
     uint16_t shadowModeOffset;
 
     //
@@ -2619,6 +2659,9 @@ EPWM_disableActionQualifierShadowLoadMode(uint32_t base,
     // immediate mode only.
     //
     HWREGH(base + EPWM_O_AQCTL) &= ~(1U << shadowModeOffset);
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -2652,12 +2695,16 @@ EPWM_setActionQualifierT1TriggerSource(uint32_t base,
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Set T1 trigger source
     //
     HWREGH(base + EPWM_O_AQTSRCSEL) =
          ((HWREGH(base + EPWM_O_AQTSRCSEL) & (~EPWM_AQTSRCSEL_T1SEL_M)) |
           ((uint16_t)trigger));
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -2691,12 +2738,16 @@ EPWM_setActionQualifierT2TriggerSource(uint32_t base,
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Set T2 trigger source
     //
     HWREGH(base + EPWM_O_AQTSRCSEL) =
           ((HWREGH(base + EPWM_O_AQTSRCSEL) & (~EPWM_AQTSRCSEL_T2SEL_M)) |
            ((uint16_t)trigger << EPWM_AQTSRCSEL_T2SEL_S));
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -2748,7 +2799,9 @@ EPWM_setActionQualifierAction(uint32_t base,
                               EPWM_ActionQualifierOutputEvent event)
 {
     uint32_t registerOffset;
+#ifndef __TMS320C2000__
     uint32_t registerTOffset;
+#endif
 
     //
     // Check the arguments
@@ -2759,11 +2812,14 @@ EPWM_setActionQualifierAction(uint32_t base,
     // Get the register offset
     //
     registerOffset = EPWM_O_AQCTLA + (uint16_t)epwmOutput;
+#ifndef __TMS320C2000__
     registerTOffset = EPWM_O_AQCTLA2 + (uint16_t)epwmOutput;
+#endif
 
     //
     // If the event occurs on T1 or T2 events
     //
+#ifndef __TMS320C2000__
     if(((uint16_t)event & 0x1U) == 1U)
     {
         //
@@ -2774,6 +2830,9 @@ EPWM_setActionQualifierAction(uint32_t base,
           ((uint16_t)output << ((uint16_t)event - 1U)));
     }
     else
+#else
+        ASSERT(((uint16_t)event & 0x1U) != 1U); // only F2806x
+#endif
     {
         //
         // Write to ZRO,PRD,CAU,CAD,CBU or CBD bits of AQCTLA register
@@ -2957,6 +3016,7 @@ EPWM_setAdditionalActionQualifierActionComplete(uint32_t base,
                                EPWM_ActionQualifierOutputModule epwmOutput,
                                uint16_t action)
 {
+#ifndef __TMS320C2000__
     uint32_t registerTOffset;
 
     //
@@ -2973,6 +3033,9 @@ EPWM_setAdditionalActionQualifierActionComplete(uint32_t base,
     // Write to T1U, T1D, T2U or T2D of AQCTLA2 register
     //
     HWREGH(base + registerTOffset) = (uint16_t)action;
+#else
+    ASSERT(false); // not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -3418,12 +3481,16 @@ EPWM_setDeadBandControlShadowLoadMode(uint32_t base,
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Enable the shadow mode and setup the load event
     //
     HWREGH(base + EPWM_O_DBCTL2) =
           ((HWREGH(base + EPWM_O_DBCTL2) & ~EPWM_DBCTL2_LOADDBCTLMODE_M) |
            (EPWM_DBCTL2_SHDWDBCTLMODE | (uint16_t)loadMode));
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -3446,11 +3513,15 @@ EPWM_disableDeadBandControlShadowLoadMode(uint32_t base)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Disable the shadow load mode. Only immediate load mode only.
     //
     HWREGH(base + EPWM_O_DBCTL2) =
                  (HWREGH(base + EPWM_O_DBCTL2) & ~EPWM_DBCTL2_SHDWDBCTLMODE);
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -3997,12 +4068,16 @@ EPWM_enableTripZoneAdvAction(uint32_t base)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Enable Advanced feature. Set ETZE bit
     //
     EALLOW;
     HWREGH(base + EPWM_O_TZCTL2) |= EPWM_TZCTL2_ETZE;
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -4024,12 +4099,16 @@ EPWM_disableTripZoneAdvAction(uint32_t base)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Disable Advanced feature. clear ETZE bit
     //
     EALLOW;
     HWREGH(base + EPWM_O_TZCTL2) &= ~EPWM_TZCTL2_ETZE;
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -4130,6 +4209,7 @@ EPWM_setTripZoneAdvAction(uint32_t base, EPWM_TripZoneAdvancedEvent tzAdvEvent,
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Set the Advanced Action for Trip Zone events
     //
@@ -4140,6 +4220,9 @@ EPWM_setTripZoneAdvAction(uint32_t base, EPWM_TripZoneAdvancedEvent tzAdvEvent,
 
     HWREGH(base + EPWM_O_TZCTL2) |= EPWM_TZCTL2_ETZE;
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -4187,6 +4270,7 @@ EPWM_setTripZoneAdvDigitalCompareActionA(uint32_t base,
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Set the Advanced Action for Trip Zone events
     //
@@ -4197,6 +4281,9 @@ EPWM_setTripZoneAdvDigitalCompareActionA(uint32_t base,
 
     HWREGH(base + EPWM_O_TZCTL2) |= EPWM_TZCTL2_ETZE;
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -4243,6 +4330,7 @@ static inline void EPWM_setTripZoneAdvDigitalCompareActionB(uint32_t base,
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Set the Advanced Action for Trip Zone events
     //
@@ -4253,6 +4341,9 @@ static inline void EPWM_setTripZoneAdvDigitalCompareActionB(uint32_t base,
 
     HWREGH(base + EPWM_O_TZCTL2) |= EPWM_TZCTL2_ETZE;
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -4397,10 +4488,15 @@ EPWM_getCycleByCycleTripZoneFlagStatus(uint32_t base)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Return the Cycle By Cycle Trip zone flag status
     //
     return(HWREGH(base + EPWM_O_TZCBCFLG) & 0xFFU);
+#else
+    ASSERT(false); // function not available on F2806x
+    return 0;
+#endif
 }
 
 //*****************************************************************************
@@ -4432,10 +4528,15 @@ EPWM_getOneShotTripZoneFlagStatus(uint32_t base)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Return the One Shot Trip zone flag status
     //
     return(HWREGH(base + EPWM_O_TZOSTFLG) & 0xFFU);
+#else
+    ASSERT(false); // function not available on F2806x
+    return 0;
+#endif
 }
 
 //*****************************************************************************
@@ -4549,12 +4650,16 @@ EPWM_clearCycleByCycleTripZoneFlag(uint32_t base, uint16_t tzCBCFlags)
     ASSERT(EPWM_isBaseValid(base));
     ASSERT(tzCBCFlags < 0x800U);
 
+#ifndef __TMS320C2000__
     //
     // Clear the Cycle By Cycle Trip zone flag
     //
     EALLOW;
     HWREGH(base + EPWM_O_TZCBCCLR) |= tzCBCFlags;
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -4587,12 +4692,16 @@ EPWM_clearOneShotTripZoneFlag(uint32_t base, uint16_t tzOSTFlags)
     ASSERT(EPWM_isBaseValid(base));
     ASSERT(tzOSTFlags < 0x800U);
 
+#ifndef __TMS320C2000__
     //
     // Clear the Cycle By Cycle Trip zone flag
     //
     EALLOW;
     HWREGH(base + EPWM_O_TZOSTCLR) |= tzOSTFlags;
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -4784,6 +4893,7 @@ EPWM_setInterruptEventCount(uint32_t base, uint16_t eventCount)
     ASSERT(EPWM_isBaseValid(base));
     ASSERT(eventCount < 16U);
 
+#ifndef __TMS320C2000__
     //
     // Enable advanced feature of interrupt every up to 15 events
     //
@@ -4791,6 +4901,9 @@ EPWM_setInterruptEventCount(uint32_t base, uint16_t eventCount)
     HWREGH(base + EPWM_O_ETINTPS) =
          ((HWREGH(base + EPWM_O_ETINTPS) & ~EPWM_ETINTPS_INTPRD2_M) |
            eventCount);
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -4867,10 +4980,14 @@ EPWM_enableInterruptEventCountInit(uint32_t base)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Enable interrupt event count initializing/loading
     //
     HWREGH(base + EPWM_O_ETCNTINITCTL) |= EPWM_ETCNTINITCTL_INTINITEN;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -4893,10 +5010,14 @@ EPWM_disableInterruptEventCountInit(uint32_t base)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Disable interrupt event count initializing/loading
     //
     HWREGH(base + EPWM_O_ETCNTINITCTL) &= ~EPWM_ETCNTINITCTL_INTINITEN;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -4922,10 +5043,14 @@ EPWM_forceInterruptEventCountInit(uint32_t base)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Load the Interrupt Event counter value
     //
     HWREGH(base + EPWM_O_ETCNTINITCTL) |= EPWM_ETCNTINITCTL_INTINITFRC;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -4951,12 +5076,16 @@ EPWM_setInterruptEventCountInitValue(uint32_t base, uint16_t eventCount)
     ASSERT(EPWM_isBaseValid(base));
     ASSERT(eventCount < 16U);
 
+#ifndef __TMS320C2000__
     //
     // Set the Pre-interrupt event count
     //
     HWREGH(base + EPWM_O_ETCNTINIT) =
          ((HWREGH(base + EPWM_O_ETCNTINIT) & ~EPWM_ETCNTINIT_INTINIT_M) |
           (uint16_t)(eventCount & 0xFU));
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -4978,11 +5107,16 @@ EPWM_getInterruptEventCount(uint32_t base)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Return the interrupt event count
     //
     return(((HWREGH(base + EPWM_O_ETINTPS) & EPWM_ETINTPS_INTCNT2_M) >>
              EPWM_ETINTPS_INTCNT2_S));
+#else
+    ASSERT(false); // function not available on F2806x
+    return 0;
+#endif
 }
 
 //*****************************************************************************
@@ -5252,6 +5386,7 @@ EPWM_setADCTriggerEventPrescale(uint32_t base,
     // Check the arguments
     //
     ASSERT(EPWM_isBaseValid(base));
+#ifndef __TMS320C2000__
     ASSERT(preScaleCount < 16U);
 
     //
@@ -5276,6 +5411,19 @@ EPWM_setADCTriggerEventPrescale(uint32_t base,
              ((HWREGH(base + EPWM_O_ETSOCPS) & ~EPWM_ETSOCPS_SOCBPRD2_M) |
               (preScaleCount << EPWM_ETSOCPS_SOCBPRD2_S));
     }
+#else
+    ASSERT(preScaleCount < 4U);
+
+    HWREGH(base + EPWM_O_ETPS) |= EPWM_ETPS_SOCPSSEL;
+    ASSERT(adcSOCType == EPWM_SOC_A);
+
+    //
+    // Set the count for SOC A
+    //
+    HWREGH(base + EPWM_O_ETPS) =
+       ((HWREGH(base + EPWM_O_ETPS) & ~EPWM_ETPS_SOCAPRD_M) |
+         (preScaleCount<<8));
+#endif
 }
 
 //*****************************************************************************
@@ -5368,10 +5516,14 @@ EPWM_enableADCTriggerEventCountInit(uint32_t base,
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Enable SOC event count initializing/loading
     //
     HWREGH(base + EPWM_O_ETCNTINITCTL) |= 1U << ((uint16_t)adcSOCType + 14U);
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -5401,11 +5553,15 @@ EPWM_disableADCTriggerEventCountInit(uint32_t base,
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Disable SOC event count initializing/loading
     //
     HWREGH(base + EPWM_O_ETCNTINITCTL) &=
                                   ~(1U << ((uint16_t)adcSOCType + 14U));
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -5433,10 +5589,14 @@ EPWM_forceADCTriggerEventCountInit(uint32_t base,
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Load the Interrupt Event counter value
     //
     HWREGH(base + EPWM_O_ETCNTINITCTL) |= 1U << ((uint16_t)adcSOCType + 11U);
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -5467,6 +5627,7 @@ EPWM_setADCTriggerEventCountInitValue(uint32_t base,
     ASSERT(EPWM_isBaseValid(base));
     ASSERT(eventCount < 16);
 
+#ifndef __TMS320C2000__
     //
     // Set the ADC Trigger event count
     //
@@ -5482,6 +5643,9 @@ EPWM_setADCTriggerEventCountInitValue(uint32_t base,
              ((HWREGH(base + EPWM_O_ETCNTINIT) & ~EPWM_ETCNTINIT_SOCBINIT_M) |
               (eventCount << EPWM_ETCNTINIT_SOCBINIT_S));
     }
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -5503,6 +5667,7 @@ static inline uint16_t
 EPWM_getADCTriggerEventCount(uint32_t base,
                              EPWM_ADCStartOfConversionType adcSOCType)
 {
+#ifndef __TMS320C2000__
     uint16_t eventCount;
 
     //
@@ -5524,6 +5689,10 @@ EPWM_getADCTriggerEventCount(uint32_t base,
                                         EPWM_ETSOCPS_SOCBCNT2_S) & 0xFU;
     }
     return(eventCount);
+#else
+    ASSERT(false); // function not available on F2806x
+    return 0;
+#endif
 }
 
 //*****************************************************************************
@@ -6115,6 +6284,7 @@ EPWM_setDigitalCompareEventSource(uint32_t base,
                                   EPWM_DigitalCompareEvent dcEvent,
                                   EPWM_DigitalCompareEventSource dcEventSource)
 {
+#ifndef __TMS320C2000__
     uint32_t registerOffset;
 
     //
@@ -6141,6 +6311,9 @@ EPWM_setDigitalCompareEventSource(uint32_t base,
                   ((uint16_t)dcEventSource << 8U));
     }
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -6175,6 +6348,7 @@ EPWM_setDigitalCompareEventSyncMode(uint32_t base,
                                     EPWM_DigitalCompareEvent dcEvent,
                                     EPWM_DigitalCompareSyncMode syncMode)
 {
+#ifndef __TMS320C2000__
     uint32_t registerOffset;
 
     //
@@ -6201,6 +6375,9 @@ EPWM_setDigitalCompareEventSyncMode(uint32_t base,
              ((uint16_t)syncMode << 9U));
     }
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -6223,6 +6400,7 @@ static inline void
 EPWM_enableDigitalCompareADCTrigger(uint32_t base,
                                     EPWM_DigitalCompareModule dcModule)
 {
+#ifndef __TMS320C2000__
     uint32_t registerOffset;
 
     //
@@ -6239,6 +6417,9 @@ EPWM_enableDigitalCompareADCTrigger(uint32_t base,
     HWREGH(base + registerOffset) =
                        (HWREGH(base + registerOffset) | EPWM_DCACTL_EVT1SOCE);
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -6261,6 +6442,7 @@ static inline void
 EPWM_disableDigitalCompareADCTrigger(uint32_t base,
                                      EPWM_DigitalCompareModule dcModule)
 {
+#ifndef __TMS320C2000__
     uint32_t registerOffset;
 
     //
@@ -6277,6 +6459,9 @@ EPWM_disableDigitalCompareADCTrigger(uint32_t base,
     HWREGH(base + registerOffset) =
                       (HWREGH(base + registerOffset) & ~EPWM_DCACTL_EVT1SOCE);
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -6299,6 +6484,7 @@ static inline void
 EPWM_enableDigitalCompareSyncEvent(uint32_t base,
                                    EPWM_DigitalCompareModule dcModule)
 {
+#ifndef __TMS320C2000__
     uint32_t registerOffset;
 
     //
@@ -6315,6 +6501,9 @@ EPWM_enableDigitalCompareSyncEvent(uint32_t base,
     HWREGH(base + registerOffset) =
                      (HWREGH(base + registerOffset) | EPWM_DCACTL_EVT1SYNCE);
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -6337,6 +6526,7 @@ static inline void
 EPWM_disableDigitalCompareSyncEvent(uint32_t base,
                                     EPWM_DigitalCompareModule dcModule)
 {
+#ifndef __TMS320C2000__
     uint32_t registerOffset;
 
     //
@@ -6353,6 +6543,9 @@ EPWM_disableDigitalCompareSyncEvent(uint32_t base,
     HWREGH(base + registerOffset) =
                       (HWREGH(base + registerOffset) & ~EPWM_DCACTL_EVT1SYNCE);
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //
@@ -6535,6 +6728,7 @@ EPWM_enableDigitalCompareTripCombinationInput(uint32_t base,
                                               uint16_t tripInput,
                                               EPWM_DigitalCompareType dcType)
 {
+#ifndef __TMS320C2000__
     uint32_t registerOffset;
 
     //
@@ -6561,6 +6755,9 @@ EPWM_enableDigitalCompareTripCombinationInput(uint32_t base,
     HWREGH(base + EPWM_O_DCTRIPSEL) =
       (HWREGH(base + EPWM_O_DCTRIPSEL) | (0xFU << ((uint16_t)dcType << 2U)));
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -6589,6 +6786,7 @@ EPWM_disableDigitalCompareTripCombinationInput(uint32_t base,
                                                uint16_t tripInput,
                                                EPWM_DigitalCompareType dcType)
 {
+#ifndef __TMS320C2000__
     uint32_t registerOffset;
 
     //
@@ -6609,6 +6807,9 @@ EPWM_disableDigitalCompareTripCombinationInput(uint32_t base,
     HWREGH(base + registerOffset) =
                            (HWREGH(base + registerOffset) & ~tripInput);
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //
@@ -6633,12 +6834,16 @@ EPWM_enableValleyCapture(uint32_t base)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Set VCAPE bit
     //
     EALLOW;
     HWREGH(base + EPWM_O_VCAPCTL) |= EPWM_VCAPCTL_VCAPE;
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -6660,12 +6865,16 @@ EPWM_disableValleyCapture(uint32_t base)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Clear VCAPE bit
     //
     EALLOW;
     HWREGH(base + EPWM_O_VCAPCTL) &= ~EPWM_VCAPCTL_VCAPE;
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -6691,12 +6900,16 @@ EPWM_startValleyCapture(uint32_t base)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Set VCAPSTART bit
     //
     EALLOW;
     HWREGH(base + EPWM_O_VCAPCTL) |= EPWM_VCAPCTL_VCAPSTART;
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -6722,6 +6935,7 @@ EPWM_setValleyTriggerSource(uint32_t base, EPWM_ValleyTriggerSource trigger)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Write to TRIGSEL bits
     //
@@ -6730,6 +6944,9 @@ EPWM_setValleyTriggerSource(uint32_t base, EPWM_ValleyTriggerSource trigger)
              ((HWREGH(base + EPWM_O_VCAPCTL) & ~EPWM_VCAPCTL_TRIGSEL_M) |
               ((uint16_t)trigger << 2U));
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -6762,6 +6979,7 @@ EPWM_setValleyTriggerEdgeCounts(uint32_t base, uint16_t startCount,
     ASSERT(EPWM_isBaseValid(base));
     ASSERT((startCount < 16U) && (stopCount < 16U));
 
+#ifndef __TMS320C2000__
     //
     // Write to STARTEDGE and STOPEDGE bits
     //
@@ -6771,6 +6989,9 @@ EPWM_setValleyTriggerEdgeCounts(uint32_t base, uint16_t startCount,
                       ~(EPWM_VCNTCFG_STARTEDGE_M | EPWM_VCNTCFG_STOPEDGE_M)) |
                       (startCount | (stopCount << 8U)));
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -6792,12 +7013,16 @@ EPWM_enableValleyHWDelay(uint32_t base)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Set EDGEFILTDLYSEL bit
     //
     EALLOW;
     HWREGH(base + EPWM_O_VCAPCTL) |= EPWM_VCAPCTL_EDGEFILTDLYSEL;
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -6819,12 +7044,16 @@ EPWM_disableValleyHWDelay(uint32_t base)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Clear EDGEFILTDLYSEL bit
     //
     EALLOW;
     HWREGH(base + EPWM_O_VCAPCTL) &= ~EPWM_VCAPCTL_EDGEFILTDLYSEL;
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -6847,10 +7076,14 @@ EPWM_setValleySWDelayValue(uint32_t base, uint16_t delayOffsetValue)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Write to SWVDELVAL bits
     //
     HWREGH(base + EPWM_O_SWVDELVAL) = delayOffsetValue;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -6873,6 +7106,7 @@ EPWM_setValleyDelayDivider(uint32_t base, EPWM_ValleyDelayMode delayMode)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Write to VDELAYDIV bits
     //
@@ -6881,6 +7115,9 @@ EPWM_setValleyDelayDivider(uint32_t base, EPWM_ValleyDelayMode delayMode)
          ((HWREGH(base + EPWM_O_VCAPCTL) & ~EPWM_VCAPCTL_VDELAYDIV_M) |
           ((uint16_t)delayMode << 7U));
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -6907,6 +7144,7 @@ EPWM_getValleyEdgeStatus(uint32_t base, EPWM_ValleyCounterEdge edge)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     if(edge == EPWM_VALLEY_COUNT_START_EDGE)
     {
         //
@@ -6923,6 +7161,10 @@ EPWM_getValleyEdgeStatus(uint32_t base, EPWM_ValleyCounterEdge edge)
         return(((HWREGH(base + EPWM_O_VCNTCFG) & EPWM_VCNTCFG_STOPEDGESTS) ==
                 EPWM_VCNTCFG_STOPEDGESTS) ? true : false);
     }
+#else
+    ASSERT(false); // function not available on F2806x
+    return 0;
+#endif
 }
 
 //*****************************************************************************
@@ -6947,10 +7189,15 @@ EPWM_getValleyCount(uint32_t base)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Read VCNTVAL register
     //
     return(HWREGH(base + EPWM_O_VCNTVAL));
+#else
+    ASSERT(false); // function not available on F2806x
+    return 0;
+#endif
 }
 
 //*****************************************************************************
@@ -6972,10 +7219,15 @@ EPWM_getValleyHWDelay(uint32_t base)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Read HWVDELVAL  register
     //
     return(HWREGH(base + EPWM_O_HWVDELVAL));
+#else
+    ASSERT(false); // function not available on F2806x
+    return 0;
+#endif
 }
 
 //*****************************************************************************
@@ -6999,12 +7251,16 @@ EPWM_enableGlobalLoad(uint32_t base)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Shadow to active load is controlled globally
     //
     EALLOW;
     HWREGH(base + EPWM_O_GLDCTL) |= EPWM_GLDCTL_GLD;
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -7027,12 +7283,16 @@ EPWM_disableGlobalLoad(uint32_t base)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Shadow to active load is controlled individually
     //
     EALLOW;
     HWREGH(base + EPWM_O_GLDCTL) &= ~EPWM_GLDCTL_GLD;
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -7072,6 +7332,7 @@ EPWM_setGlobalLoadTrigger(uint32_t base, EPWM_GlobalLoadTrigger loadTrigger)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Set the Global shadow to active load pulse
     //
@@ -7080,6 +7341,9 @@ EPWM_setGlobalLoadTrigger(uint32_t base, EPWM_GlobalLoadTrigger loadTrigger)
                ((HWREGH(base + EPWM_O_GLDCTL) & ~EPWM_GLDCTL_GLDMODE_M) |
                 ((uint16_t)loadTrigger << EPWM_GLDCTL_GLDMODE_S));
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -7106,6 +7370,7 @@ EPWM_setGlobalLoadEventPrescale(uint32_t base, uint16_t prescalePulseCount)
     ASSERT(EPWM_isBaseValid(base));
     ASSERT(prescalePulseCount < 8U);
 
+#ifndef __TMS320C2000__
     //
     // Set the number of counts that have to occur before
     // a load strobe is issued
@@ -7115,6 +7380,9 @@ EPWM_setGlobalLoadEventPrescale(uint32_t base, uint16_t prescalePulseCount)
                 ((HWREGH(base + EPWM_O_GLDCTL) & ~EPWM_GLDCTL_GLDPRD_M) |
                  (prescalePulseCount << EPWM_GLDCTL_GLDPRD_S));
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -7138,10 +7406,15 @@ EPWM_getGlobalLoadEventCount(uint32_t base)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Return the number of events that have occurred
     //
     return((HWREGH(base + EPWM_O_GLDCTL) >> EPWM_GLDCTL_GLDCNT_S) & 0x7U);
+#else
+    ASSERT(false); // function not available on F2806x
+    return 0;
+#endif
 }
 
 //*****************************************************************************
@@ -7165,12 +7438,16 @@ EPWM_disableGlobalLoadOneShotMode(uint32_t base)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Enable global continuous shadow to active load
     //
     EALLOW;
     HWREGH(base + EPWM_O_GLDCTL) &= ~EPWM_GLDCTL_OSHTMODE;
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -7194,12 +7471,16 @@ EPWM_enableGlobalLoadOneShotMode(uint32_t base)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Enable global continuous shadow to active load
     //
     EALLOW;
     HWREGH(base + EPWM_O_GLDCTL) |= EPWM_GLDCTL_OSHTMODE;
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -7223,12 +7504,16 @@ EPWM_setGlobalLoadOneShotLatch(uint32_t base)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Set a one shot Global shadow load pulse.
     //
     EALLOW;
     HWREGH(base + EPWM_O_GLDCTL2) |= EPWM_GLDCTL2_OSHTLD;
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -7251,12 +7536,16 @@ EPWM_forceGlobalLoadOneShotEvent(uint32_t base)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Force a Software Global shadow load pulse
     //
     EALLOW;
     HWREGH(base + EPWM_O_GLDCTL2) |= EPWM_GLDCTL2_GFRCLD;
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -7293,12 +7582,16 @@ EPWM_enableGlobalLoadRegisters(uint32_t base, uint16_t loadRegister)
     ASSERT(EPWM_isBaseValid(base));
     ASSERT((loadRegister > 0x0000U) && (loadRegister < 0x0800U));
 
+#ifndef __TMS320C2000__
     //
     // The register specified by loadRegister is loaded globally
     //
     EALLOW;
     HWREGH(base + EPWM_O_GLDCFG) |= loadRegister;
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -7336,6 +7629,7 @@ EPWM_disableGlobalLoadRegisters(uint32_t base, uint16_t loadRegister)
     ASSERT(EPWM_isBaseValid(base));
     ASSERT((loadRegister > 0x0000U) && (loadRegister < 0x0800U));
 
+#ifndef __TMS320C2000__
     //
     // The register specified by loadRegister is loaded by individual
     // register configuration setting
@@ -7343,6 +7637,9 @@ EPWM_disableGlobalLoadRegisters(uint32_t base, uint16_t loadRegister)
     EALLOW;
     HWREGH(base + EPWM_O_GLDCFG) &= ~loadRegister;
     EDIS;
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
@@ -7366,11 +7663,15 @@ EPWM_lockRegisters(uint32_t base, EPWM_LockRegisterGroup registerGroup)
     //
     ASSERT(EPWM_isBaseValid(base));
 
+#ifndef __TMS320C2000__
     //
     // Write the Key to EPWMLOCK register
     //
     HWREG(base + EPWM_O_LOCK) =
             ((uint32_t)0xA5A50000U | ((uint32_t)registerGroup));
+#else
+    ASSERT(false); // function not available on F2806x
+#endif
 }
 
 //*****************************************************************************
