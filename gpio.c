@@ -186,10 +186,10 @@ GPIO_setPadConfig(uint32_t pin, uint32_t pinType)
 
     EALLOW;
 
-#ifndef __TMS320C2000__
     //
     // Enable open drain if necessary
     //
+#ifndef __TMS320C2000__
     if((pinType & GPIO_PIN_TYPE_OD) != 0U)
     {
         gpioBaseAddr[GPIO_GPxODR_INDEX] |= pinMask;
@@ -199,7 +199,7 @@ GPIO_setPadConfig(uint32_t pin, uint32_t pinType)
         gpioBaseAddr[GPIO_GPxODR_INDEX] &= ~pinMask;
     }
 #else
-    ASSERT(pinType & GPIO_PIN_TYPE_OD); // TO BE IMPLEMENTED
+    ASSERT((pinType & GPIO_PIN_TYPE_OD) == 0U) // not implemented on F2806x
 #endif
 
     //
@@ -214,10 +214,10 @@ GPIO_setPadConfig(uint32_t pin, uint32_t pinType)
         gpioBaseAddr[GPIO_GPxPUD_INDEX] |= pinMask;
     }
 
-#ifndef __TMS320C2000__
     //
     // Invert polarity if necessary
     //
+#ifndef __TMS320C2000__
     if((pinType & GPIO_PIN_TYPE_INVERT) != 0U)
     {
         gpioBaseAddr[GPIO_GPxINV_INDEX] |= pinMask;
@@ -227,7 +227,7 @@ GPIO_setPadConfig(uint32_t pin, uint32_t pinType)
         gpioBaseAddr[GPIO_GPxINV_INDEX] &= ~pinMask;
     }
 #else
-    ASSERT(pinType & GPIO_PIN_TYPE_INVERT);
+    ASSERT((pinType & GPIO_PIN_TYPE_INVERT) == 0U) // not implemented on F2806x
 #endif
 
     EDIS;
@@ -256,16 +256,16 @@ GPIO_getPadConfig(uint32_t pin)
 
     pinTypeRes = GPIO_PIN_TYPE_STD;
 
-#ifndef __TMS320C2000__
     //
     // Get open drain value
     //
+#ifndef __TMS320C2000__
     if((gpioBaseAddr[GPIO_GPxODR_INDEX] & pinMask) != 0U)
     {
         pinTypeRes |= GPIO_PIN_TYPE_OD;
     }
 #else
-    ASSERT((gpioBaseAddr[GPIO_GPxODR_INDEX] & pinMask) != 0U);
+    ASSERT((gpioBaseAddr[GPIO_GPxODR_INDEX] & pinMask) == 0U); // not implemented on F2806x
 #endif
     //
     // Get pull-up value
@@ -283,6 +283,8 @@ GPIO_getPadConfig(uint32_t pin)
     {
         pinTypeRes |= GPIO_PIN_TYPE_INVERT;
     }
+#else
+    ASSERT((gpioBaseAddr[GPIO_GPxINV_INDEX] & pinMask) 0= 0U); // not implemented on F2806x
 #endif
     return(pinTypeRes);
 }
@@ -499,9 +501,8 @@ GPIO_setPinConfig(uint32_t pinConfig)
     HWREG(muxRegAddr + GPIO_MUX_TO_GMUX) =
         (HWREG(muxRegAddr + GPIO_MUX_TO_GMUX) & ~pinMask) |
         (((pinConfig >> 2) & (uint32_t)0x3U) << shiftAmt);
-#else
-    ASSERT(false);
 #endif
+
     //
     // Write value into MUX register
     //
