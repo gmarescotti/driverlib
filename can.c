@@ -702,14 +702,8 @@ CAN_sendMessage(uint32_t base, uint32_t objID, uint16_t msgLen,
 
     objID--;
 
-    mboxes[objID].MDL.byte.BYTE0 = msgData[0];
-    mboxes[objID].MDL.byte.BYTE1 = msgData[1];
-    mboxes[objID].MDL.byte.BYTE2 = msgData[2];
-    mboxes[objID].MDL.byte.BYTE3 = msgData[3];
-    mboxes[objID].MDH.byte.BYTE4 = msgData[4];
-    mboxes[objID].MDH.byte.BYTE5 = msgData[5];
-    mboxes[objID].MDH.byte.BYTE6 = msgData[6];
-    mboxes[objID].MDH.byte.BYTE7 = msgData[7];
+    mboxes[objID].MDH.all = *(Uint32*)&msgData[0];
+    mboxes[objID].MDL.all = *(Uint32*)&msgData[2];
 
     ECanaShadow.CANTRS.all = 1ul << objID;
     pECanaRegs->CANTRS.all = ECanaShadow.CANTRS.all;
