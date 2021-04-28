@@ -184,7 +184,11 @@
 #define CANB_BASE                 0x0004A000U
 #define CANB_MSG_RAM_BASE         0x0004B000U
 #define DEVCFG_BASE               0x0005D000U
+#ifndef __TMS320C2000__
 #define CLKCFG_BASE               0x0005D200U
+#else
+#define CLKCFG_BASE               0x00007010U
+#endif
 #define CPUSYS_BASE               0x0005D300U
 #define PERIPHAC_BASE             0x0005D500U
 #define ANALOGSUBSYS_BASE         0x0005D700U

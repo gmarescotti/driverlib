@@ -1137,7 +1137,12 @@ SysCtl_setExternalOscMode(SysCtl_ExternalOscMode mode)
 static inline uint16_t
 SysCtl_getExternalOscCounterValue(void)
 {
+#ifdef __TMS320C2000__
+    ASSERT(0);
+    return 0;
+#else
     return(HWREGH(CLKCFG_BASE + SYSCTL_O_X1CNT) & SYSCTL_X1CNT_X1CNT_M);
+#endif
 }
 
 //*****************************************************************************
@@ -1150,7 +1155,11 @@ SysCtl_getExternalOscCounterValue(void)
 static inline void
 SysCtl_clearExternalOscCounterValue(void)
 {
+#ifdef __TMS320C2000__
+    ASSERT(0);
+#else
     HWREG(CLKCFG_BASE + SYSCTL_O_X1CNT) |= SYSCTL_X1CNT_CLR;
+#endif
 }
 
 //*****************************************************************************

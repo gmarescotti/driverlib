@@ -80,6 +80,9 @@ SYSCTL_DELAY;
 static void
 SysCtl_pollX1Counter(void)
 {
+#ifdef __TMS320C2000__
+    ASSERT(0);
+#else
     uint16_t loopCount = 0U;
 
     //
@@ -118,6 +121,7 @@ SysCtl_pollX1Counter(void)
         //
         loopCount++;
     }while(loopCount < 4U);
+#endif
 }
 
 //*****************************************************************************

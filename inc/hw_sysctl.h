@@ -71,6 +71,7 @@
 #define SYSCTL_O_SOFTPRES20   0xAAU    // Peripheral Software Reset register
 #define SYSCTL_O_TAP_STATUS   0x130U   // Status of JTAG State machine & Debugger Connect
 
+#ifndef __TMS320C2000__
 #define SYSCTL_O_CLKCFGLOCK1     0x2U    // Lock bit for CLKCFG registers
 #define SYSCTL_O_CLKSRCCTL1      0x8U    // Clock Source Control register-1
 #define SYSCTL_O_CLKSRCCTL2      0xAU    // Clock Source Control register-2
@@ -84,6 +85,23 @@
 #define SYSCTL_O_MCDCR           0x2EU   // Missing Clock Detect Control Register
 #define SYSCTL_O_X1CNT           0x30U   // 10-bit Counter on X1 Clock
 #define SYSCTL_O_XTALCR          0x32U   // XTAL Control Register
+#else
+#define SYSCTL_O_CLKCFGLOCK1     0x2U    // Lock bit for CLKCFG registers
+#define SYSCTL_O_CLKSRCCTL1      0x10U    // Clock Source Control register-1
+                                          // Clock Control Register (for F28069x)
+
+#define SYSCTL_O_CLKSRCCTL2      0xAU    // Clock Source Control register-2
+#define SYSCTL_O_CLKSRCCTL3      0xCU    // Clock Source Control register-3
+#define SYSCTL_O_SYSPLLCTL1      0xEU    // SYSPLL Control register-1
+#define SYSCTL_O_SYSPLLMULT      0x14U   // SYSPLL Multiplier register
+#define SYSCTL_O_SYSPLLSTS       0x1U   // SYSPLL Status register
+#define SYSCTL_O_SYSCLKDIVSEL    0x22U   // System Clock Divider Select register
+#define SYSCTL_O_XCLKOUTDIVSEL   0x28U   // XCLKOUT Divider Select register
+#define SYSCTL_O_LOSPCP          0x2CU   // Low Speed Clock Source Prescalar
+#define SYSCTL_O_MCDCR           SYSCTL_O_SYSPLLSTS   // Missing Clock Detect Control Register
+// #define SYSCTL_O_X1CNT           0x30U   // 10-bit Counter on X1 Clock
+#define SYSCTL_O_XTALCR          0x2U   // XTAL Control Register // CLKCTL for F2806x
+#endif
 
 #define SYSCTL_O_CPUSYSLOCK1   0x0U    // Lock bit for CPUSYS registers
 #define SYSCTL_O_PIEVERRADDR   0xAU    // PIE Vector Fetch Error Address register
@@ -390,10 +408,16 @@
 // The following are defines for the bit fields in the CLKSRCCTL1 register
 //
 //*************************************************************************************************
+#ifndef __TMS320C2000__
 #define SYSCTL_CLKSRCCTL1_OSCCLKSRCSEL_S   0U
 #define SYSCTL_CLKSRCCTL1_OSCCLKSRCSEL_M   0x3U    // OSCCLK Source Select Bit
 #define SYSCTL_CLKSRCCTL1_INTOSC2OFF       0x8U    // Internal Oscillator 2 Off Bit
 #define SYSCTL_CLKSRCCTL1_WDHALTI          0x20U   // Watchdog HALT Mode Ignore Bit
+#else
+#define SYSCTL_CLKSRCCTL1_OSCCLKSRCSEL_M   (1U<<0)     // OSCCLK Source Select Bit
+#define SYSCTL_CLKSRCCTL1_INTOSC2OFF       (1U<<10)    // Internal Oscillator 2 Off Bit
+#define SYSCTL_CLKSRCCTL1_WDHALTI          (1U<<12)    // Watchdog HALT Mode Ignore Bit
+#endif
 //*************************************************************************************************
 //
 // The following are defines for the bit fields in the CLKSRCCTL2 register
@@ -461,10 +485,17 @@
 // The following are defines for the bit fields in the MCDCR register
 //
 //*************************************************************************************************
+#ifndef __TMS320C2000__
 #define SYSCTL_MCDCR_MCLKSTS   0x1U   // Missing Clock Status Bit
 #define SYSCTL_MCDCR_MCLKCLR   0x2U   // Missing Clock Clear Bit
 #define SYSCTL_MCDCR_MCLKOFF   0x4U   // Missing Clock Detect Off Bit
 #define SYSCTL_MCDCR_OSCOFF    0x8U   // Oscillator Clock Off Bit
+#else
+#define SYSCTL_MCDCR_MCLKSTS   (1U<<3)   // Missing Clock Status Bit
+#define SYSCTL_MCDCR_MCLKCLR   (1U<<4)   // Missing Clock Clear Bit
+#define SYSCTL_MCDCR_MCLKOFF   (1U<<6)   // Missing Clock Detect Off Bit
+#define SYSCTL_MCDCR_OSCOFF    (1U<<5)   // Oscillator Clock Off Bit
+#endif
 //*************************************************************************************************
 //
 // The following are defines for the bit fields in the X1CNT register
@@ -478,9 +509,13 @@
 // The following are defines for the bit fields in the XTALCR register
 //
 //*************************************************************************************************
+#ifndef __TMS320C2000__
 #define SYSCTL_XTALCR_OSCOFF   0x1U   // XTAL Oscillator powered-down
 #define SYSCTL_XTALCR_SE       0x2U   // XTAL Oscilator in Single-Ended mode
-
+#else
+#define SYSCTL_XTALCR_OSCOFF   (1U<<14)   // XTAL Oscillator powered-down
+#define SYSCTL_XTALCR_SE       (1U<<14)   // MISSING? XTAL Oscilator in Single-Ended mode
+#endif
 //*************************************************************************************************
 //
 // The following are defines for the bit fields in the CPUSYSLOCK1 register

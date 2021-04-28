@@ -170,7 +170,7 @@
 #define GPIO_18_EQEP2A                   GPIO_18_EQEP2_A
 #define GPIO_18_PMBACTL                  GPIO_18_PMBUSA_CTL
 
-#define GPIO_22_GPIO22                   GPIO_22_GPIO22_VFBSW
+// #define GPIO_22_GPIO22                   GPIO_22_GPIO22_VFBSW
 #define GPIO_22_EQEP1S                   GPIO_22_EQEP1_STROBE
 #define GPIO_22_SCITXDB                  GPIO_22_SCIB_TX
 #define GPIO_22_SPICLKB                  GPIO_22_SPIB_CLK

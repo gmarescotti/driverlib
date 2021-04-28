@@ -61,10 +61,10 @@ extern "C"
 //
 //*****************************************************************************
 
-#ifndef ahskhak
+#ifdef __TMS320C2000__
 #undef EALLOW
 #undef EDIS
-#include "F2806x_Device.h"
+// #include "F2806x_ECan.h"
 #ifndef EALLOW
 #define  EALLOW __asm(" EALLOW")
 #endif
