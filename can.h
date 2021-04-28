@@ -43,9 +43,11 @@
 #define CAN_H
 
 #ifdef __TMS320C2000__
-#undef EALLOW
-#undef EDIS
-#include "F2806x_Device.h"
+//#undef EALLOW
+//#undef EDIS
+#define Uint32 uint32_t
+#include "F2806x_ECan.h"
+// #define M_INT9  0x0100
 #endif
 
 //*****************************************************************************
@@ -1040,7 +1042,7 @@ CAN_enableInterrupt(uint32_t base, uint32_t intFlags)
     if (intFlags & CAN_INT_IE1) ECanShadow.CANGIM.bit.I1EN = 1;
     if (intFlags & CAN_INT_STATUS) ECanShadow.CANGIM.bit.GIL = 1;
     if (intFlags & CAN_INT_ERROR) ECanShadow.CANGIM.bit.EPIM = 1;
-    ECanaRegs.CANGIM.all = ECanShadow.CANGIM.all;
+    pECanaRegs->CANGIM.all = ECanShadow.CANGIM.all;
 
     EDIS;
 
@@ -1439,7 +1441,7 @@ CAN_getInterruptCause(uint32_t base)
     //
     return(HWREG_BP(base + CAN_O_INT));
 #else
-    uint32_t objID = ECanaRegs.CANGIF1.bit.MIV1;
+    uint32_t objID = pECanaRegs->CANGIF1.bit.MIV1;
     objID ++;
     return objID;
 
@@ -1509,17 +1511,18 @@ CAN_enableGlobalInterrupt(uint32_t base, uint16_t intFlags)
     // Enable the requested interrupts
     //
     HWREGH(base + CAN_O_GLB_INT_EN) |= intFlags;
-#else
+#else // 0x00048000U + 0x50U |= 0x00000001U
     /**
     * Setta la maschera delle interruzioni nell'interrupt
     * expansion register.
     */
-    PieCtrlRegs.PIEIER9.bit.INTx6 = 1;          // Enable INT 9.6 in the PIE (rx CAN1A)
-
-    /**
-    * Abilita nella CPU la interruzione INT9.
-    */
-    IER |=  M_INT9;
+// already done in Interrupt_register e Interrupt_enableInCPU
+//    PieCtrlRegs.PIEIER9.bit.INTx6 = 1;          // Enable INT 9.6 in the PIE (rx CAN1A)
+//
+//    /**
+//    * Abilita nella CPU la interruzione INT9.
+//    */
+//    IER |=  M_INT9;
 #endif
 }
 
@@ -1594,7 +1597,7 @@ CAN_clearGlobalInterruptStatus(uint32_t base, uint16_t intFlags)
     * Effettua il clear di tutti i
     * flag.
     */
-    ECanaRegs.CANGIF1.all = 0xFFFF;
+    pECanaRegs->CANGIF1.all = 0xFFFF;
 #endif
 }
 

@@ -89,63 +89,63 @@ CAN_initModule(uint32_t base)
 
     EALLOW;     // EALLOW enables access to protected bits
 
-    ECanaShadow.CANTIOC.all = ECanaRegs.CANTIOC.all;
+    ECanaShadow.CANTIOC.all = pECanaRegs->CANTIOC.all;
     ECanaShadow.CANTIOC.bit.TXFUNC = 1;
-    ECanaRegs.CANTIOC.all = ECanaShadow.CANTIOC.all;
+    pECanaRegs->CANTIOC.all = ECanaShadow.CANTIOC.all;
 
-    ECanaShadow.CANRIOC.all = ECanaRegs.CANRIOC.all;
+    ECanaShadow.CANRIOC.all = pECanaRegs->CANRIOC.all;
     ECanaShadow.CANRIOC.bit.RXFUNC = 1;
-    ECanaRegs.CANRIOC.all = ECanaShadow.CANRIOC.all;
+    pECanaRegs->CANRIOC.all = ECanaShadow.CANRIOC.all;
 
-    ECanaShadow.CANMC.all = ECanaRegs.CANMC.all;
+    ECanaShadow.CANMC.all = pECanaRegs->CANMC.all;
     ECanaShadow.CANMC.bit.SCB = 1;
     ECanaShadow.CANMC.bit.ABO = 1;
-    ECanaRegs.CANMC.all = ECanaShadow.CANMC.all;
+    pECanaRegs->CANMC.all = ECanaShadow.CANMC.all;
 
     /* Initialize all bits of 'Message Control Register' to zero */
     // Some bits of MSGCTRL register come up in an unknown state. For proper operation,
     // all bits (including reserved bits) of MSGCTRL must be initialized to zero
 
-    ECanaMboxes.MBOX0.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX1.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX2.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX3.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX4.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX5.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX6.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX7.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX8.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX9.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX10.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX11.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX12.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX13.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX14.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX15.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX16.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX17.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX18.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX19.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX20.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX21.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX22.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX23.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX24.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX25.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX26.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX27.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX28.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX29.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX30.MSGCTRL.all = 0x00000000;
-    ECanaMboxes.MBOX31.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX0.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX1.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX2.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX3.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX4.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX5.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX6.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX7.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX8.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX9.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX10.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX11.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX12.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX13.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX14.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX15.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX16.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX17.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX18.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX19.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX20.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX21.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX22.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX23.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX24.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX25.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX26.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX27.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX28.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX29.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX30.MSGCTRL.all = 0x00000000;
+    pECanaMboxes->MBOX31.MSGCTRL.all = 0x00000000;
 
     // TAn, RMPn, GIFn bits are all zero upon reset and are cleared again
     //  as a matter of precaution.
 
-    ECanaRegs.CANTA.all = 0xFFFFFFFF;   /* Clear all TAn bits */
-    ECanaRegs.CANRMP.all = 0xFFFFFFFF;  /* Clear all RMPn bits */
-    ECanaRegs.CANGIF0.all = 0xFFFFFFFF; /* Clear all interrupt flag bits */
-    ECanaRegs.CANGIF1.all = 0xFFFFFFFF;
+    pECanaRegs->CANTA.all = 0xFFFFFFFF;   /* Clear all TAn bits */
+    pECanaRegs->CANRMP.all = 0xFFFFFFFF;  /* Clear all RMPn bits */
+    pECanaRegs->CANGIF0.all = 0xFFFFFFFF; /* Clear all interrupt flag bits */
+    pECanaRegs->CANGIF1.all = 0xFFFFFFFF;
     EDIS;
 #endif
 }
@@ -275,14 +275,14 @@ CAN_setBitTiming(uint32_t base, uint16_t prescaler,
 
     /* Configure bit timing parameters for ECana*/
 
-    ECanaShadow.CANMC.all = ECanaRegs.CANMC.all;
+    ECanaShadow.CANMC.all = pECanaRegs->CANMC.all;
     ECanaShadow.CANMC.bit.CCR = 1 ;            // Set CCR = 1
-    ECanaRegs.CANMC.all = ECanaShadow.CANMC.all;
+    pECanaRegs->CANMC.all = ECanaShadow.CANMC.all;
 
     // Wait until the CPU has been granted permission to change the configuration registers
     do
         {
-        ECanaShadow.CANES.all = ECanaRegs.CANES.all;
+        ECanaShadow.CANES.all = pECanaRegs->CANES.all;
         } while(ECanaShadow.CANES.bit.CCE != 1 );       // Wait for CCE bit to be set..
 
     ECanaShadow.CANBTC.all = 0;
@@ -294,20 +294,20 @@ CAN_setBitTiming(uint32_t base, uint16_t prescaler,
     ECanaShadow.CANBTC.bit.TSEG1REG = tSeg1; // 10;
 
     ECanaShadow.CANBTC.bit.SAM = 0;
-    ECanaRegs.CANBTC.all = ECanaShadow.CANBTC.all;
+    pECanaRegs->CANBTC.all = ECanaShadow.CANBTC.all;
 
-    ECanaShadow.CANMC.all = ECanaRegs.CANMC.all;
+    ECanaShadow.CANMC.all = pECanaRegs->CANMC.all;
     ECanaShadow.CANMC.bit.CCR = 0 ;            // Set CCR = 0
-    ECanaRegs.CANMC.all = ECanaShadow.CANMC.all;
+    pECanaRegs->CANMC.all = ECanaShadow.CANMC.all;
 
     // Wait until the CPU no longer has permission to change the configuration registers
     do
     {
-        ECanaShadow.CANES.all = ECanaRegs.CANES.all;
+        ECanaShadow.CANES.all = pECanaRegs->CANES.all;
     } while(ECanaShadow.CANES.bit.CCE != 0 );       // Wait for CCE bit to be  cleared..
 
     /* Disable all Mailboxes  */
-    ECanaRegs.CANME.all = 0;        // Required before writing the MSGIDs
+    pECanaRegs->CANME.all = 0;        // Required before writing the MSGIDs
 
     EDIS;
 #endif
@@ -365,7 +365,7 @@ CAN_clearInterruptStatus(uint32_t base, uint32_t intClr)
         }
     }
 #else
-    ECanaRegs.CANRMP.all |= (1 << intClr);
+    pECanaRegs->CANRMP.all |= (1 << intClr);
 #endif
 }
 
@@ -561,7 +561,7 @@ CAN_setupMessageObject(uint32_t base, uint32_t objID, uint32_t msgID,
     ASSERT((objID <= 32U) && (objID > 0U));
     ASSERT(msgLen <= 8U);
 
-    volatile struct MBOX *mboxes = &ECanaMboxes.MBOX0;
+    volatile struct MBOX *mboxes = &pECanaMboxes->MBOX0;
 
     objID--;
 
@@ -584,9 +584,9 @@ CAN_setupMessageObject(uint32_t base, uint32_t objID, uint32_t msgID,
     * Configura le mailbox in ricezione/trasmissione
     */
     if (msgType==CAN_MSG_OBJ_TYPE_RX)
-        ECanaRegs.CANMD.all |= (1ul << objID);
+        pECanaRegs->CANMD.all |= (1ul << objID);
     else
-        ECanaRegs.CANMD.all &= ~(1ul << objID);
+        pECanaRegs->CANMD.all &= ~(1ul << objID);
 
     /**
     * Configura la lunghezza dei messaggi in byte.
@@ -596,7 +596,7 @@ CAN_setupMessageObject(uint32_t base, uint32_t objID, uint32_t msgID,
     /**
     * Abilita le mailbox.
     */
-    ECanaRegs.CANME.all |= (1ul << objID);
+    pECanaRegs->CANME.all |= (1ul << objID);
 
     /**
     * Configura le interruzioni
@@ -607,7 +607,7 @@ CAN_setupMessageObject(uint32_t base, uint32_t objID, uint32_t msgID,
     * Configura quali mailbox generano le interruzioni.
     */
     if (msgType==CAN_MSG_OBJ_TYPE_RX) {
-        ECanaRegs.CANMIM.all |= 1ul << objID;
+        pECanaRegs->CANMIM.all |= 1ul << objID;
     }
 
     /**
@@ -615,7 +615,7 @@ CAN_setupMessageObject(uint32_t base, uint32_t objID, uint32_t msgID,
     * Le mailbox in rx generano le interruzioni su ECANINT1.
     */
     if (msgType==CAN_MSG_OBJ_TYPE_RX) {
-        ECanaRegs.CANMIL.all |= 1ul << objID;
+        pECanaRegs->CANMIL.all |= 1ul << objID;
     }
 
     EDIS;
@@ -697,7 +697,7 @@ CAN_sendMessage(uint32_t base, uint32_t objID, uint16_t msgLen,
                                      (uint32_t)CAN_IF1CMD_TXRQST |
                                      (objID & CAN_IF1CMD_MSG_NUM_M));
 #else
-    volatile struct MBOX *mboxes = &ECanaMboxes.MBOX0;
+    volatile struct MBOX *mboxes = &pECanaMboxes->MBOX0;
     struct ECAN_REGS ECanaShadow;
 
     objID--;
@@ -712,7 +712,7 @@ CAN_sendMessage(uint32_t base, uint32_t objID, uint16_t msgLen,
     mboxes[objID].MDH.byte.BYTE7 = msgData[7];
 
     ECanaShadow.CANTRS.all = 1ul << objID;
-    ECanaRegs.CANTRS.all = ECanaShadow.CANTRS.all;
+    pECanaRegs->CANTRS.all = ECanaShadow.CANTRS.all;
 
 #endif
 }
@@ -792,7 +792,7 @@ CAN_readMessage(uint32_t base, uint32_t objID,
     }
 
 #else
-    volatile struct MBOX *mboxes = &ECanaMboxes.MBOX0;
+    volatile struct MBOX *mboxes = &pECanaMboxes->MBOX0;
 
     objID--;
 
