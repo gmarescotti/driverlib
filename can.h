@@ -46,7 +46,7 @@
 //#undef EALLOW
 //#undef EDIS
 #define Uint32 uint32_t
-#include "F2806x_ECan.h"
+#include <port_F2806x_ECan.h>
 // #define M_INT9  0x0100
 #endif
 
