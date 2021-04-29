@@ -199,7 +199,7 @@ GPIO_setPadConfig(uint32_t pin, uint32_t pinType)
         gpioBaseAddr[GPIO_GPxODR_INDEX] &= ~pinMask;
     }
 #else
-    ASSERT((pinType & GPIO_PIN_TYPE_OD) == 0U) // not implemented on F2806x
+    ASSERT((pinType & GPIO_PIN_TYPE_OD) == 0U); // not implemented on F2806x
 #endif
 
     //
@@ -227,7 +227,7 @@ GPIO_setPadConfig(uint32_t pin, uint32_t pinType)
         gpioBaseAddr[GPIO_GPxINV_INDEX] &= ~pinMask;
     }
 #else
-    ASSERT((pinType & GPIO_PIN_TYPE_INVERT) == 0U) // not implemented on F2806x
+    ASSERT((pinType & GPIO_PIN_TYPE_INVERT) == 0U); // not implemented on F2806x
 #endif
 
     EDIS;
@@ -265,7 +265,7 @@ GPIO_getPadConfig(uint32_t pin)
         pinTypeRes |= GPIO_PIN_TYPE_OD;
     }
 #else
-    ASSERT((gpioBaseAddr[GPIO_GPxODR_INDEX] & pinMask) == 0U); // not implemented on F2806x
+    // ASSERT((gpioBaseAddr[GPIO_GPxODR_INDEX] & pinMask) == 0U); // not implemented on F2806x
 #endif
     //
     // Get pull-up value
@@ -284,7 +284,7 @@ GPIO_getPadConfig(uint32_t pin)
         pinTypeRes |= GPIO_PIN_TYPE_INVERT;
     }
 #else
-    ASSERT((gpioBaseAddr[GPIO_GPxINV_INDEX] & pinMask) 0= 0U); // not implemented on F2806x
+    // ASSERT((gpioBaseAddr[GPIO_GPxINV_INDEX] & pinMask) == 0U); // not implemented on F2806x
 #endif
     return(pinTypeRes);
 }
