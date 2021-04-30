@@ -133,8 +133,13 @@
 #define CMPSS6_BASE               0x00005D20U
 #define CMPSS7_BASE               0x00005D40U
 #define SDFM1_BASE                0x00005E00U
+#ifndef __TMS320C2000__
 #define SPIA_BASE                 0x00006100U
 #define SPIB_BASE                 0x00006110U
+#else
+#define SPIA_BASE                 0x00007040U
+#define SPIB_BASE                 0x00007740U
+#endif
 #define CLA1PROMCRC_BASE          0x000061C0U
 #define PMBUSA_BASE               0x00006400U
 #define FSITXA_BASE               0x00006600U

@@ -143,7 +143,6 @@ extern "C"
 //*****************************************************************************
 static void Interrupt_defaultHandler(void)
 {
-#ifndef __TMS320C2000__
     uint16_t pieVect;
     uint16_t vectID;
 
@@ -173,9 +172,6 @@ static void Interrupt_defaultHandler(void)
     {
         ;
     }
-#else
-    ASSERT(false);
-#endif
 }
 
 //*****************************************************************************
@@ -304,7 +300,6 @@ Interrupt_disableMaster(void)
 static inline void
 Interrupt_register(uint32_t interruptNumber, void (*handler)(void))
 {
-//#ifndef __TMS320C2000__
     uint32_t address;
 
     //
@@ -319,22 +314,6 @@ Interrupt_register(uint32_t interruptNumber, void (*handler)(void))
     EALLOW;
     HWREG(address) = (uint32_t)handler;
     EDIS;
-//#else
-//    EALLOW;
-//    switch (interruptNumber) {
-//    case INT_CANA0:
-//        PieVectTable.ECAN0INTA = handler;  //!< interrupt di ricezione su CAN-A
-//        break;
-//    case INT_CANA1:
-//        PieVectTable.ECAN1INTA = handler;  //!< interrupt di ricezione su CAN-A
-//        break;
-//    default:
-//        ASSERT(false);
-//        break;
-//    }
-//    PieCtrlRegs.PIEIER9.bit.INTx6 = 1;  //!< Enable INT 9.6 in the PIE (rx CAN1A)
-//    EDIS;
-//#endif
 }
 
 //*****************************************************************************
@@ -400,14 +379,10 @@ Interrupt_unregister(uint32_t interruptNumber)
 static inline void
 Interrupt_enableInCPU(uint16_t cpuInterrupt)
 {
-//#ifndef __TMS320C2000__
     //
     // Set the interrupt bits in the CPU.
     //
     IER |= cpuInterrupt;
-//#else
-//    ASSERT(false);
-//#endif
 }
 
 //*****************************************************************************
@@ -430,14 +405,10 @@ Interrupt_enableInCPU(uint16_t cpuInterrupt)
 static inline void
 Interrupt_disableInCPU(uint16_t cpuInterrupt)
 {
-#ifndef __TMS320C2000__
     //
     // Clear the interrupt bits in the CPU.
     //
     IER &= ~cpuInterrupt;
-#else
-    ASSERT(false);
-#endif
 }
 
 //*****************************************************************************
@@ -462,17 +433,10 @@ Interrupt_disableInCPU(uint16_t cpuInterrupt)
 static inline void
 Interrupt_clearACKGroup(uint16_t group)
 {
-//#ifndef __TMS320C2000__
     //
     // Set interrupt group acknowledge bits
     //
     HWREGH(PIECTRL_BASE + PIE_O_ACK) = group;
-//#else
-//    /**
-//     * riarma l'interrupt
-//     */
-//    PieCtrlRegs.PIEACK.all |= PIEACK_GROUP9;
-//#endif
 }
 
 //*****************************************************************************
@@ -488,11 +452,7 @@ Interrupt_clearACKGroup(uint16_t group)
 static inline void
 Interrupt_enablePIE(void)
 {
-#ifndef __TMS320C2000__
     HWREGH(PIECTRL_BASE + PIE_O_CTRL) |= PIE_CTRL_ENPIE;
-#else
-    ASSERT(false);
-#endif
 }
 
 //*****************************************************************************
@@ -509,11 +469,7 @@ Interrupt_enablePIE(void)
 static inline void
 Interrupt_disablePIE(void)
 {
-#ifndef __TMS320C2000__
     HWREGH(PIECTRL_BASE + PIE_O_CTRL) &= ~PIE_CTRL_ENPIE;
-#else
-    ASSERT(false);
-#endif
 }
 
 //*****************************************************************************
