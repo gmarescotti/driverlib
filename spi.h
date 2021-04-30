@@ -129,6 +129,7 @@ typedef enum
     SPI_FIFO_TX2        = 0x0002U,      //!< Transmit FIFO 2/16 full
     SPI_FIFO_TX3        = 0x0003U,      //!< Transmit FIFO 3/16 full
     SPI_FIFO_TX4        = 0x0004U,      //!< Transmit FIFO 4/16 full
+#ifndef __TMS320C2000__
     SPI_FIFO_TX5        = 0x0005U,      //!< Transmit FIFO 5/16 full
     SPI_FIFO_TX6        = 0x0006U,      //!< Transmit FIFO 6/16 full
     SPI_FIFO_TX7        = 0x0007U,      //!< Transmit FIFO 7/16 full
@@ -142,6 +143,9 @@ typedef enum
     SPI_FIFO_TX15       = 0x000FU,      //!< Transmit FIFO 15/16 full
     SPI_FIFO_TX16       = 0x0010U,      //!< Transmit FIFO full
     SPI_FIFO_TXFULL     = 0x0010U       //!< Transmit FIFO full
+#else
+    SPI_FIFO_TXFULL     = 0x0004U       //!< Transmit FIFO full
+#endif
 } SPI_TxFIFOLevel;
 
 //*****************************************************************************
@@ -159,6 +163,7 @@ typedef enum
     SPI_FIFO_RX2        = 0x0002U,      //!< Receive FIFO 2/16 full
     SPI_FIFO_RX3        = 0x0003U,      //!< Receive FIFO 3/16 full
     SPI_FIFO_RX4        = 0x0004U,      //!< Receive FIFO 4/16 full
+#ifndef __TMS320C2000__
     SPI_FIFO_RX5        = 0x0005U,      //!< Receive FIFO 5/16 full
     SPI_FIFO_RX6        = 0x0006U,      //!< Receive FIFO 6/16 full
     SPI_FIFO_RX7        = 0x0007U,      //!< Receive FIFO 7/16 full
@@ -172,7 +177,11 @@ typedef enum
     SPI_FIFO_RX15       = 0x000FU,      //!< Receive FIFO 15/16 full
     SPI_FIFO_RX16       = 0x0010U,      //!< Receive FIFO full
     SPI_FIFO_RXFULL     = 0x0010U,      //!< Receive FIFO full
-    SPI_FIFO_RXDEFAULT  = 0x001FU       //!< To prevent interrupt at reset
+    SPI_FIFO_RXDEFAULT  = 0x000FU       //!< To prevent interrupt at reset
+#else
+    SPI_FIFO_RXFULL     = 0x0004U,       //!< Transmit FIFO full
+    SPI_FIFO_RXDEFAULT  = 0x001FU,       //!< To prevent interrupt at reset
+#endif
 } SPI_RxFIFOLevel;
 
 //*****************************************************************************
