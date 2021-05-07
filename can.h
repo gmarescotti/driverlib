@@ -42,14 +42,6 @@
 #ifndef CAN_H
 #define CAN_H
 
-#ifdef __TMS320C2000__
-//#undef EALLOW
-//#undef EDIS
-#define Uint32 uint32_t
-#include <port_F2806x_ECan.h>
-// #define M_INT9  0x0100
-#endif
-
 //*****************************************************************************
 //
 // If building with a C++ compiler, make all of the definitions in this header
@@ -69,6 +61,11 @@ extern "C"
 //! @{
 //
 //*****************************************************************************
+
+#ifdef __TMS320C2000__
+#define Uint32 uint32_t
+#include "porting/port_F2806x_ECan.h"
+#endif
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -318,8 +315,10 @@ static inline bool
 CAN_isBaseValid(uint32_t base)
 {
 	return(
-           (base == CANA_BASE) ||
-           (base == CANB_BASE)
+           (base == CANA_BASE)
+#ifndef __TMS320C2000__
+            || (base == CANB_BASE)
+#endif
 		  );
 }
 #endif
