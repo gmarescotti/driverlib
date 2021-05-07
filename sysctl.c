@@ -72,17 +72,18 @@
 //*****************************************************************************
 SYSCTL_DELAY;
 
+#define DEVICE_DELAY_US(x) SysCtl_delay(((((long double)(x)) / (1000000.0L /  \
+                              (long double)90000000)) - 9.0L) / 5.0L)
+
 //*****************************************************************************
 //
 // SysCtl_pollX1Counter()
 //
 //*****************************************************************************
+#ifndef __TMS320C2000__
 static void
 SysCtl_pollX1Counter(void)
 {
-#ifdef __TMS320C2000__
-    ASSERT(0);
-#else
     uint16_t loopCount = 0U;
 
     //
@@ -121,8 +122,8 @@ SysCtl_pollX1Counter(void)
         //
         loopCount++;
     }while(loopCount < 4U);
-#endif
 }
+#endif
 
 //*****************************************************************************
 //
@@ -132,7 +133,7 @@ SysCtl_pollX1Counter(void)
 uint32_t
 SysCtl_getClock(uint32_t clockInHz)
 {
-    uint32_t temp;
+    __attribute__((unused)) uint32_t temp;
     uint32_t oscSource;
     uint32_t clockOut;
 
@@ -153,11 +154,18 @@ SysCtl_getClock(uint32_t clockInHz)
         // If one of the internal oscillators is being used, start from the
         // known default frequency.  Otherwise, use clockInHz parameter.
         //
+#ifndef __TMS320C2000__
         oscSource = HWREG(CLKCFG_BASE + SYSCTL_O_CLKSRCCTL1) &
                     (uint32_t)SYSCTL_CLKSRCCTL1_OSCCLKSRCSEL_M;
 
         if((oscSource == ((uint32_t)SYSCTL_OSCSRC_OSC2 >> SYSCTL_OSCSRC_S)) ||
            (oscSource == ((uint32_t)SYSCTL_OSCSRC_OSC1 >> SYSCTL_OSCSRC_S)))
+#else
+        // oscSource = SysCtrlRegs->CLKCTL.bit.OSCCLKSRCSEL | SysCtrlRegs->CLKCTL.bit.OSCCLKSRC2SEL;
+        oscSource = SysCtrlRegs->CLKCTL.bit.OSCCLKSRC2SEL;
+
+        if(oscSource != 0)
+#endif
         {
             clockOut = SYSCTL_DEFAULT_OSC_FREQ;
         }
@@ -169,6 +177,7 @@ SysCtl_getClock(uint32_t clockInHz)
         //
         // If the PLL is enabled calculate its effect on the clock
         //
+#ifndef __TMS320C2000__
         if((HWREG(CLKCFG_BASE + SYSCTL_O_SYSPLLCTL1) &
             (SYSCTL_SYSPLLCTL1_PLLEN | SYSCTL_SYSPLLCTL1_PLLCLKEN)) == 3U)
         {
@@ -198,6 +207,25 @@ SysCtl_getClock(uint32_t clockInHz)
             clockOut /= (2U * (HWREG(CLKCFG_BASE + SYSCTL_O_SYSCLKDIVSEL) &
                                SYSCTL_SYSCLKDIVSEL_PLLSYSCLKDIV_M));
         }
+#else
+        if(SysCtrlRegs->PLLCR.bit.DIV != 0)
+        {
+            //
+            // Calculate portion from fractional multiplier
+            //
+            temp = (clockInHz * SysCtrlRegs->PLLSTS.bit.DIVSEL) / 4U;
+
+            //
+            // Calculate integer multiplier and fixed divide by 2
+            //
+            clockOut = clockOut * SysCtrlRegs->PLLCR.bit.DIV / 4;
+
+            //
+            // Add in fractional portion
+            //
+            // ???clockOut += temp;
+        }
+#endif
     }
 
     return(clockOut);
@@ -213,8 +241,8 @@ SysCtl_setClock(uint32_t config)
 {
     uint16_t divSel;
     uint16_t pllMult;
-    uint32_t retries, oscSource, pllLockStatus;
-    uint32_t timeout;
+    __attribute__((unused)) uint32_t retries, oscSource, pllLockStatus;
+    __attribute__((unused))     uint32_t timeout;
     bool status = false;
     uint16_t mult;
 
@@ -242,6 +270,7 @@ SysCtl_setClock(uint32_t config)
         oscSource = config & SYSCTL_OSCSRC_M;
         SysCtl_selectOscSource(oscSource);
 
+#ifndef __TMS320C2000__
         //
         // Bypass PLL
         //
@@ -254,6 +283,7 @@ SysCtl_setClock(uint32_t config)
         // Delay of at least 60 OSCCLK cycles required post PLL bypass
         //
         SysCtl_delay(11U);
+#endif
 
         //
         // Get the PLL multiplier settings from config
@@ -265,15 +295,20 @@ SysCtl_setClock(uint32_t config)
                                SYSCTL_FMULT_S) <<
                               SYSCTL_SYSPLLMULT_FMULT_S);
 
+        ASSERT(pllMult==18);
         //
         // Get the PLL multipliers currently programmed
         //
+#ifndef __TMS320C2000__
         mult  = (uint16_t)((HWREG(CLKCFG_BASE + SYSCTL_O_SYSPLLMULT) &
                             (uint32_t)SYSCTL_SYSPLLMULT_IMULT_M) >>
                            (uint32_t)SYSCTL_SYSPLLMULT_IMULT_S);
 
         mult |= (uint16_t)(HWREG(CLKCFG_BASE + SYSCTL_O_SYSPLLMULT) &
                                  SYSCTL_SYSPLLMULT_FMULT_M);
+#else
+        mult  = SysCtrlRegs->PLLCR.bit.DIV;
+#endif
 
         //
         // Lock PLL only if the multipliers need update
@@ -289,9 +324,38 @@ SysCtl_setClock(uint32_t config)
                 // Set dividers to /1
                 //
                 EALLOW;
+#ifndef __TMS320C2000__
                 HWREGH(CLKCFG_BASE + SYSCTL_O_SYSCLKDIVSEL) = 0U;
+#else
+                // DIVSEL MUST be 0 before PLLCR can be changed from
+                // 0x0000. It is set to 0 by an external reset XRSn
+                // This puts us in 1/4
+                if (SysCtrlRegs->PLLSTS.bit.DIVSEL != 0)
+                {
+                    SysCtrlRegs->PLLSTS.bit.DIVSEL = 0;
+                }
+#endif
                 EDIS;
 
+#ifdef __TMS320C2000__
+                //
+                // Before setting PLLCR turn off missing clock detect logic
+                //
+                EALLOW;
+                SysCtrlRegs->PLLSTS.bit.MCLKOFF = 1;
+                SysCtrlRegs->PLLCR.bit.DIV = pllMult;
+                EDIS;
+
+                while(SysCtrlRegs->PLLSTS.bit.PLLLOCKS != 1) {
+                    // wait..
+                }
+
+                EALLOW;
+                SysCtrlRegs->PLLSTS.bit.MCLKOFF = 0;
+                EDIS;
+
+                status = true; // CHECK PLL?
+#else
                 //
                 // Loop to retry locking the PLL should the DCC module
                 // indicate that it was not successful.
@@ -344,6 +408,7 @@ SysCtl_setClock(uint32_t config)
                         break;
                     }
                 }
+#endif
             }
             else
             {
@@ -367,6 +432,32 @@ SysCtl_setClock(uint32_t config)
             //
             divSel = (uint16_t)(config & SYSCTL_SYSDIV_M) >> SYSCTL_SYSDIV_S;
 
+#ifdef __TMS320C2000__
+            //
+            // If switching to 1/2
+            //
+            if((divSel == 1)||(divSel == 2))
+            {
+                EALLOW;
+                SysCtrlRegs->PLLSTS.bit.DIVSEL = divSel;
+                EDIS;
+            }
+
+            //
+            // If switching to 1/1
+            // * First go to 1/2 and let the power settle
+            //   The time required will depend on the system, this is only an example
+            // * Then switch to 1/1
+            //
+            if(divSel == 3)
+            {
+                EALLOW;
+                SysCtrlRegs->PLLSTS.bit.DIVSEL = 2;
+                SysCtl_delay(50L);
+                SysCtrlRegs->PLLSTS.bit.DIVSEL = 3;
+                EDIS;
+            }
+#else
             EALLOW;
             if(divSel != (126U / 2U))
             {
@@ -406,8 +497,11 @@ SysCtl_setClock(uint32_t config)
                 (HWREGH(CLKCFG_BASE + SYSCTL_O_SYSCLKDIVSEL) &
                  ~SYSCTL_SYSCLKDIVSEL_PLLSYSCLKDIV_M) | divSel;
             EDIS;
+#endif
         }
     }
+
+    ASSERT(status);
 
     return(status);
 }
@@ -419,11 +513,12 @@ SysCtl_setClock(uint32_t config)
 void
 SysCtl_selectXTAL(void)
 {
-    EALLOW;
 
+#ifndef __TMS320C2000__
     //
     // Turn on XTAL and select crystal mode
     //
+    EALLOW;
     HWREGH(CLKCFG_BASE + SYSCTL_O_XTALCR) &= ~SYSCTL_XTALCR_OSCOFF;
     HWREGH(CLKCFG_BASE + SYSCTL_O_XTALCR) &= ~SYSCTL_XTALCR_SE;
     EDIS;
@@ -432,6 +527,11 @@ SysCtl_selectXTAL(void)
     // Wait for the X1 clock to saturate
     //
     SysCtl_pollX1Counter();
+
+    //
+    // Turn off XCLKIN
+    //
+    HWREGH(CLKCFG_BASE + SYSCTL_O_XTALCR) |= SYSCTL_XCLKCR_OSCOFF;
 
     //
     // Select XTAL as the oscillator source
@@ -469,6 +569,32 @@ SysCtl_selectXTAL(void)
          ((uint32_t)SYSCTL_OSCSRC_XTAL >> SYSCTL_OSCSRC_S));
         EDIS;
     }
+#else
+    EALLOW;
+    SysCtrlRegs->CLKCTL.bit.XTALOSCOFF = 0;     // Turn on XTALOSC
+
+    //
+    // Wait for 1ms while XTAL starts up
+    //
+    DEVICE_DELAY_US(1000u);
+
+    SysCtrlRegs->CLKCTL.bit.XCLKINOFF = 1;      // Turn off XCLKIN
+    SysCtrlRegs->CLKCTL.bit.OSCCLKSRC2SEL = 0;  // Switch to external clock
+
+    //
+    // Switch from INTOSC1 to INTOSC2/ext clk
+    //
+    SysCtrlRegs->CLKCTL.bit.OSCCLKSRCSEL = 1;
+
+    //
+    // Clock Watchdog off of INTOSC1 always
+    //
+    SysCtrlRegs->CLKCTL.bit.WDCLKSRCSEL = 0;
+
+    SysCtrlRegs->CLKCTL.bit.INTOSC2OFF = 1;     // Turn off INTOSC2
+    SysCtrlRegs->CLKCTL.bit.INTOSC1OFF = 0;     // Leave INTOSC1 on
+    EDIS;
+#endif
 }
 
 //*****************************************************************************
@@ -476,6 +602,7 @@ SysCtl_selectXTAL(void)
 // SysCtl_selectXTALSingleEnded()
 //
 //*****************************************************************************
+#ifndef __TMS320C2000__
 void
 SysCtl_selectXTALSingleEnded(void)
 {
@@ -511,6 +638,7 @@ SysCtl_selectXTALSingleEnded(void)
         ESTOP0;
     }
 }
+#endif
 
 //*****************************************************************************
 //
@@ -522,8 +650,11 @@ SysCtl_selectOscSource(uint32_t oscSource)
 {
     ASSERT((oscSource == SYSCTL_OSCSRC_OSC1) |
            (oscSource == SYSCTL_OSCSRC_OSC2) |
-           (oscSource == SYSCTL_OSCSRC_XTAL) |
-           (oscSource == SYSCTL_OSCSRC_XTAL_SE));
+           (oscSource == SYSCTL_OSCSRC_XTAL)
+#ifndef __TMS320C2000__
+           | (oscSource == SYSCTL_OSCSRC_XTAL_SE)
+#endif
+           );
 
     //
     // Select the specified source.
@@ -531,6 +662,7 @@ SysCtl_selectOscSource(uint32_t oscSource)
     EALLOW;
     switch(oscSource)
     {
+#ifndef __TMS320C2000__
         case SYSCTL_OSCSRC_OSC2:
             //
             // Turn on INTOSC2
@@ -572,7 +704,22 @@ SysCtl_selectOscSource(uint32_t oscSource)
                    ((uint32_t)SYSCTL_OSCSRC_OSC1 >> SYSCTL_OSCSRC_S);
 
             break;
+#else
+        case SYSCTL_OSCSRC_OSC2:
+            ASSERT(false); // TODO
+            break;
 
+        case SYSCTL_OSCSRC_XTAL:
+            //
+            // Select XTAL in crystal mode and wait for it to power up
+            //
+            SysCtl_selectXTAL();
+            break;
+
+        case SYSCTL_OSCSRC_OSC1:
+            ASSERT(false); // TODO
+            break;
+#endif
         default:
             //
             // Do nothing. Not a valid oscSource value.
@@ -600,12 +747,19 @@ SysCtl_getLowSpeedClock(uint32_t clockInHz)
     //
     // Apply the divider to the main clock
     //
+#ifndef _TMS320C2000
     if((HWREG(CLKCFG_BASE + SYSCTL_O_LOSPCP) &
         SYSCTL_LOSPCP_LSPCLKDIV_M) != 0U)
     {
         clockOut /= (2U * (HWREG(CLKCFG_BASE + SYSCTL_O_LOSPCP) &
                             SYSCTL_LOSPCP_LSPCLKDIV_M));
     }
+#else
+    if(SysCtrlRegs->LOSPCP.bit.LSPCLK != 0)
+    {
+        //clockOut /= (2U * SysCtrlRegs->LOSPCP.bit.LSPCLK);
+    }
+#endif
 
     return(clockOut);
 }
@@ -619,7 +773,9 @@ uint16_t
 SysCtl_getDeviceParametric(SysCtl_DeviceParametric parametric)
 {
     uint32_t value;
-
+#ifdef __TMS320C2000__
+    ASSERT(false);
+#endif
     //
     // Get requested parametric value
     //
@@ -699,6 +855,7 @@ SysCtl_getDeviceParametric(SysCtl_DeviceParametric parametric)
 // SysCtl_isPLLValid()
 //
 //*****************************************************************************
+#ifndef __TMS320C2000__
 bool
 SysCtl_isPLLValid(uint32_t oscSource, uint32_t pllMult)
 {
@@ -872,4 +1029,5 @@ SysCtl_isPLLValid(uint32_t oscSource, uint32_t pllMult)
     return((HWREGH(base + DCC_O_STATUS) &
             (DCC_STATUS_ERR | DCC_STATUS_DONE)) == DCC_STATUS_DONE);
 }
+#endif
 

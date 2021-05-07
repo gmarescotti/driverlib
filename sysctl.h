@@ -71,6 +71,12 @@ extern "C"
 #include "debug.h"
 #include "interrupt.h"
 
+#ifdef __TMS320C2000__
+#pragma diag_suppress 303 // avoid typedef redefined warning
+typedef uint16_t Uint16;
+#include "porting/port_F2806x_SysCtrl.h"
+#pragma diag_default 303
+#endif
 
 //*****************************************************************************
 //
@@ -270,6 +276,7 @@ extern "C"
 //*****************************************************************************
 typedef enum
 {
+#ifndef __TMS320C2000__
     SYSCTL_PERIPH_CLK_CLA1 = 0x0000, //!< CLA1 clock
     SYSCTL_PERIPH_CLK_DMA = 0x0200, //!< DMA clock
     SYSCTL_PERIPH_CLK_TIMER0 = 0x0300, //!< CPUTIMER0 clock
@@ -330,6 +337,58 @@ typedef enum
     SYSCTL_PERIPH_CLK_LINA = 0x0013, //!< LIN_A clock
     SYSCTL_PERIPH_CLK_PMBUSA = 0x0014, //!< PMBUS_A clock
     SYSCTL_PERIPH_CLK_DCC0 = 0x0015  //!< DCC_0 clock
+#else
+    SYSCTL_PERIPH_CLK_CLA1 = 0x0E03, //!< CLA1 clock
+    SYSCTL_PERIPH_CLK_DMA = 0x0B03, //!< DMA clock
+    SYSCTL_PERIPH_CLK_TIMER0 = 0x0803, //!< CPUTIMER0 clock
+    SYSCTL_PERIPH_CLK_TIMER1 = 0x0903, //!< CPUTIMER1 clock
+    SYSCTL_PERIPH_CLK_TIMER2 = 0x0A03, //!< CPUTIMER2 clock
+    SYSCTL_PERIPH_CLK_HRPWM = 0x0000, //!< HRPWM clock
+    SYSCTL_PERIPH_CLK_TBCLKSYNC = 0x0200, //!< TBCLKSYNC clock
+    SYSCTL_PERIPH_CLK_EPWM1 = 0x0001, //!< EPWM1 clock
+    SYSCTL_PERIPH_CLK_EPWM2 = 0x0101, //!< EPWM2 clock
+    SYSCTL_PERIPH_CLK_EPWM3 = 0x0201, //!< EPWM3 clock
+    SYSCTL_PERIPH_CLK_EPWM4 = 0x0301, //!< EPWM4 clock
+    SYSCTL_PERIPH_CLK_EPWM5 = 0x0401, //!< EPWM5 clock
+    SYSCTL_PERIPH_CLK_EPWM6 = 0x0501, //!< EPWM6 clock
+    SYSCTL_PERIPH_CLK_EPWM7 = 0x0601, //!< EPWM7 clock
+    SYSCTL_PERIPH_CLK_EPWM8 = 0x0701, //!< EPWM8 clock
+    SYSCTL_PERIPH_CLK_ECAP1 = 0x0801, //!< ECAP1 clock
+    SYSCTL_PERIPH_CLK_ECAP2 = 0x0901, //!< ECAP2 clock
+    SYSCTL_PERIPH_CLK_ECAP3 = 0x0A01, //!< ECAP3 clock
+    SYSCTL_PERIPH_CLK_EQEP1 = 0x0E01, //!< EQEP1 clock
+    SYSCTL_PERIPH_CLK_EQEP2 = 0x0F01, //!< EQEP2 clock
+    //SYSCTL_PERIPH_CLK_SD1 = 0x0006, //!< SD1 clock
+    SYSCTL_PERIPH_CLK_SCIA = 0x0A00, //!< SCI_A clock
+    SYSCTL_PERIPH_CLK_SCIB = 0x0B00, //!< SCI_B clock
+    SYSCTL_PERIPH_CLK_SPIA = 0x0800, //!< SPI_A clock
+    SYSCTL_PERIPH_CLK_SPIB = 0x0900, //!< SPI_B clock
+    SYSCTL_PERIPH_CLK_I2CA = 0x0400, //!< I2C_A clock
+    SYSCTL_PERIPH_CLK_CANA = 0x0E00, //!< CAN_A clock
+    //SYSCTL_PERIPH_CLK_CANB = 0x010A, //!< CAN_B clock
+    SYSCTL_PERIPH_CLK_ADCA = 0x0300, //!< ADC_A clock
+    //SYSCTL_PERIPH_CLK_ADCB = 0x010D, //!< ADC_B clock
+    //SYSCTL_PERIPH_CLK_ADCC = 0x020D, //!< ADC_C clock
+    SYSCTL_PERIPH_CLK_CMPSS1 = 0x0003, //!< CMPSS1 clock
+    SYSCTL_PERIPH_CLK_CMPSS2 = 0x0103, //!< CMPSS2 clock
+    SYSCTL_PERIPH_CLK_CMPSS3 = 0x0203, //!< CMPSS3 clock
+    //SYSCTL_PERIPH_CLK_CMPSS4 = 0x030E, //!< CMPSS4 clock
+    //SYSCTL_PERIPH_CLK_CMPSS5 = 0x040E, //!< CMPSS5 clock
+    //SYSCTL_PERIPH_CLK_CMPSS6 = 0x050E, //!< CMPSS6 clock
+    //SYSCTL_PERIPH_CLK_CMPSS7 = 0x060E, //!< CMPSS7 clock
+    // COMPX and DACX Clock Enable are on  the same resource!
+//    SYSCTL_PERIPH_CLK_DACA = 0x1010, //!< DAC_A clock
+//    SYSCTL_PERIPH_CLK_DACB = 0x1110, //!< DAC_B clock
+//    SYSCTL_PERIPH_CLK_CLB1 = 0x0011, //!< CLB1 clock
+//    SYSCTL_PERIPH_CLK_CLB2 = 0x0111, //!< CLB2 clock
+//    SYSCTL_PERIPH_CLK_CLB3 = 0x0211, //!< CLB3 clock
+//    SYSCTL_PERIPH_CLK_CLB4 = 0x0311, //!< CLB4 clock
+//    SYSCTL_PERIPH_CLK_FSITXA = 0x0012, //!< FSITX_A clock
+//    SYSCTL_PERIPH_CLK_FSIRXA = 0x0112, //!< FSIRX_A clock
+//    SYSCTL_PERIPH_CLK_LINA = 0x0013, //!< LIN_A clock
+//    SYSCTL_PERIPH_CLK_PMBUSA = 0x0014, //!< PMBUS_A clock
+//    SYSCTL_PERIPH_CLK_DCC0 = 0x0015  //!< DCC_0 clock
+#endif
 } SysCtl_PeripheralPCLOCKCR;
 
 //*****************************************************************************
@@ -724,6 +783,10 @@ typedef enum
 static inline void
 SysCtl_deviceCal(void)
 {
+#ifdef __TMS320C2000__
+    SysCtrlRegs->PCLKCR0.bit.ADCENCLK = 1; // Enable ADC peripheral clock
+#endif
+
     //
     // Save the core registers used by Device_cal function in the stack
     //
@@ -750,6 +813,10 @@ SysCtl_deviceCal(void)
     asm(" POP XAR0");
     asm(" POP DP");
     asm(" POP ACC");
+
+#ifdef __TMS320C2000__
+    SysCtrlRegs->PCLKCR0.bit.ADCENCLK = 0; // Return ADC clock to original state
+#endif
 }
 
 //*****************************************************************************
@@ -774,6 +841,9 @@ SysCtl_resetPeripheral(SysCtl_PeripheralSOFTPRES peripheral)
     uint16_t regIndex;
     uint16_t bitIndex;
 
+#ifdef __TMS320C2000__
+    ASSERT(false);
+#endif
     //
     // Decode the peripheral variable.
     //
@@ -844,8 +914,27 @@ SysCtl_enablePeripheral(SysCtl_PeripheralPCLOCKCR peripheral)
     //
     // Turn on the module clock.
     //
+#ifdef _TMS320C2000
+    switch (regIndex) {
+    case 0:
+        SysCtrlRegs->PCLKCR0.all |= ((uint32_t)1U << bitIndex);
+        break;
+    case 2:
+        SysCtrlRegs->PCLKCR1.all |= ((uint32_t)1U << bitIndex);
+        break;
+    case 4:
+        SysCtrlRegs->PCLKCR2.all |= ((uint32_t)1U << bitIndex);
+        break;
+    case 6:
+        SysCtrlRegs->PCLKCR3.all |= ((uint32_t)1U << bitIndex);
+        break;
+    default:
+        ASSERT(false); // can't understand peripheral!
+    }
+#else
     HWREG(CPUSYS_BASE + SYSCTL_O_PCLKCR0 + regIndex) |=
         ((uint32_t)1U << bitIndex);
+#endif
     EDIS;
 }
 
@@ -867,6 +956,9 @@ SysCtl_disablePeripheral(SysCtl_PeripheralPCLOCKCR peripheral)
     uint16_t regIndex;
     uint16_t bitIndex;
 
+#ifdef __TMS320C2000__
+    ASSERT(false);
+#endif
     //
     // Decode the peripheral variable.
     //
@@ -897,6 +989,9 @@ SysCtl_disablePeripheral(SysCtl_PeripheralPCLOCKCR peripheral)
 static inline void
 SysCtl_resetDevice(void)
 {
+#ifdef __TMS320C2000__
+    ASSERT(false);
+#endif
     //
     // Write an incorrect check value to the watchdog control register
     // This will cause a device reset
@@ -962,6 +1057,7 @@ SysCtl_getResetCause(void)
     //
     // Set POR and XRS Causes from boot ROM Status
     //
+#ifndef __TMS320C2000__
     if((HWREG(SYSCTL_BOOT_ROM_STATUS) & (uint32_t)SYSCTL_BOOT_ROM_POR) ==
        (uint32_t)SYSCTL_BOOT_ROM_POR)
     {
@@ -972,6 +1068,9 @@ SysCtl_getResetCause(void)
     {
         resetCauses |= SYSCTL_RESC_XRSN;
     }
+#else
+    ASSERT(false);
+#endif
 
     //
     // Return the reset reasons.
@@ -1005,6 +1104,9 @@ SysCtl_clearResetCause(uint32_t rstCauses)
     //
     // Clear the given reset reasons.
     //
+#ifdef __TMS320C2000__
+    ASSERT(false);
+#endif
     HWREG(CPUSYS_BASE + SYSCTL_O_RESCCLR) = rstCauses;
 }
 
@@ -1030,9 +1132,23 @@ SysCtl_setLowSpeedClock(SysCtl_LSPCLKPrescaler prescaler)
     // Write the divider selection to the appropriate register.
     //
     EALLOW;
+#ifdef __TMS320C2000__
+    //
+    // LOSPCP prescale register settings, normally it will be set to default
+    // values
+    //
+    SysCtrlRegs->LOSPCP.bit.LSPCLK = prescaler;
+
+    //
+    // XCLKOUT to SYSCLKOUT ratio.  By default XCLKOUT = 1/4 SYSCLKOUT
+    //
+    SysCtrlRegs->XCLK.bit.XCLKOUTDIV = 2;
+
+#else
     HWREG(CLKCFG_BASE + SYSCTL_O_LOSPCP) =
         (HWREG(CLKCFG_BASE + SYSCTL_O_LOSPCP) & ~SYSCTL_LOSPCP_LSPCLKDIV_M) |
         (uint32_t)prescaler;
+#endif
     EDIS;
 }
 
@@ -1063,6 +1179,7 @@ SysCtl_selectClockOutSource(SysCtl_ClockOut source)
     //
     // Clear clock out source
     //
+#ifndef __TMS320C2000__
     HWREGH(CLKCFG_BASE + SYSCTL_O_CLKSRCCTL3) &=
         ~SYSCTL_CLKSRCCTL3_XCLKOUTSEL_M;
 
@@ -1070,6 +1187,9 @@ SysCtl_selectClockOutSource(SysCtl_ClockOut source)
     // Set clock out source
     //
     HWREGH(CLKCFG_BASE + SYSCTL_O_CLKSRCCTL3) |= (uint16_t)source;
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 }
@@ -1096,6 +1216,7 @@ SysCtl_setExternalOscMode(SysCtl_ExternalOscMode mode)
 {
     EALLOW;
 
+#ifndef __TMS320C2000__
     switch(mode)
     {
         case SYSCTL_XTALMODE_CRYSTAL:
@@ -1118,6 +1239,9 @@ SysCtl_setExternalOscMode(SysCtl_ExternalOscMode mode)
             //
             break;
     }
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 }
@@ -1138,7 +1262,7 @@ static inline uint16_t
 SysCtl_getExternalOscCounterValue(void)
 {
 #ifdef __TMS320C2000__
-    ASSERT(0);
+    ASSERT(false);
     return 0;
 #else
     return(HWREGH(CLKCFG_BASE + SYSCTL_O_X1CNT) & SYSCTL_X1CNT_X1CNT_M);
@@ -1187,6 +1311,7 @@ SysCtl_turnOnOsc(uint32_t oscSource)
 
     EALLOW;
 
+#ifndef __TMS320C2000__
     switch(oscSource)
     {
         case SYSCTL_OSCSRC_OSC2:
@@ -1211,6 +1336,9 @@ SysCtl_turnOnOsc(uint32_t oscSource)
             //
             break;
     }
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 }
@@ -1240,6 +1368,7 @@ SysCtl_turnOffOsc(uint32_t oscSource)
 
     EALLOW;
 
+#ifndef __TMS320C2000__
     switch(oscSource)
     {
         case SYSCTL_OSCSRC_OSC2:
@@ -1263,6 +1392,9 @@ SysCtl_turnOffOsc(uint32_t oscSource)
             //
             break;
     }
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 }
@@ -1286,9 +1418,13 @@ SysCtl_enterIdleMode(void)
     //
     // Configure the device to go into IDLE mode when IDLE is executed.
     //
+#ifndef __TMS320C2000__
     HWREG(CPUSYS_BASE + SYSCTL_O_LPMCR) =
                 (HWREG(CPUSYS_BASE + SYSCTL_O_LPMCR) & ~SYSCTL_LPMCR_LPM_M) |
                 SYSCTL_LPM_IDLE;
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 
@@ -1323,12 +1459,16 @@ SysCtl_enterHaltMode(void)
     //
     // Configure the device to go into HALT mode when IDLE is executed.
     //
+#ifndef __TMS320C2000__
     HWREG(CPUSYS_BASE + SYSCTL_O_LPMCR) =
                 (HWREG(CPUSYS_BASE + SYSCTL_O_LPMCR) & ~SYSCTL_LPMCR_LPM_M) |
                 SYSCTL_LPM_HALT;
 
     HWREGH(CLKCFG_BASE + SYSCTL_O_SYSPLLCTL1) &=
                 ~(SYSCTL_SYSPLLCTL1_PLLCLKEN | SYSCTL_SYSPLLCTL1_PLLEN);
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 
@@ -1359,7 +1499,7 @@ SysCtl_enterHaltMode(void)
 static inline void
 SysCtl_enableLPMWakeupPin(uint32_t pin)
 {
-    uint32_t pinMask;
+    __attribute__((unused)) uint32_t pinMask;
 
     //
     // Check the arguments.
@@ -1370,6 +1510,7 @@ SysCtl_enableLPMWakeupPin(uint32_t pin)
 
     EALLOW;
 
+#ifndef __TMS320C2000__
     if(pin < 32U)
     {
         HWREG(CPUSYS_BASE + SYSCTL_O_GPIOLPMSEL0) |= pinMask;
@@ -1378,6 +1519,9 @@ SysCtl_enableLPMWakeupPin(uint32_t pin)
     {
         HWREG(CPUSYS_BASE + SYSCTL_O_GPIOLPMSEL1) |= pinMask;
     }
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 }
@@ -1401,7 +1545,7 @@ SysCtl_enableLPMWakeupPin(uint32_t pin)
 static inline void
 SysCtl_disableLPMWakeupPin(uint32_t pin)
 {
-    uint32_t pinMask;
+    __attribute__((unused)) uint32_t pinMask;
 
     //
     // Check the arguments.
@@ -1412,6 +1556,7 @@ SysCtl_disableLPMWakeupPin(uint32_t pin)
 
     EALLOW;
 
+#ifndef __TMS320C2000__
     if(pin < 32U)
     {
         HWREG(CPUSYS_BASE + SYSCTL_O_GPIOLPMSEL0) &= ~pinMask;
@@ -1420,6 +1565,9 @@ SysCtl_disableLPMWakeupPin(uint32_t pin)
     {
         HWREG(CPUSYS_BASE + SYSCTL_O_GPIOLPMSEL1) &= ~pinMask;
     }
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 }
@@ -1444,7 +1592,11 @@ SysCtl_enableWatchdogInHalt(void)
     //
     // Set the watchdog HALT mode ignore bit.
     //
+#ifndef __TMS320C2000__
     HWREGH(CLKCFG_BASE + SYSCTL_O_CLKSRCCTL1) |= SYSCTL_CLKSRCCTL1_WDHALTI;
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 }
@@ -1468,7 +1620,11 @@ SysCtl_disableWatchdogInHalt(void)
     //
     // Clear the watchdog HALT mode ignore bit.
     //
+#ifndef __TMS320C2000__
     HWREGH(CLKCFG_BASE + SYSCTL_O_CLKSRCCTL1) &= ~SYSCTL_CLKSRCCTL1_WDHALTI;
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 }
@@ -1507,6 +1663,7 @@ SysCtl_setWatchdogMode(SysCtl_WDMode mode)
     // watchdog will generate a reset signal or an interrupt signal. Take care
     // not to write a 1 to WDOVERRIDE.
     //
+#ifndef __TMS320C2000__
     if(mode == SYSCTL_WD_MODE_INTERRUPT)
     {
         HWREGH(WD_BASE + SYSCTL_O_SCSR) =
@@ -1518,6 +1675,9 @@ SysCtl_setWatchdogMode(SysCtl_WDMode mode)
         HWREGH(WD_BASE + SYSCTL_O_SCSR) &= ~(SYSCTL_SCSR_WDENINT |
                                              SYSCTL_SCSR_WDOVERRIDE);
     }
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 }
@@ -1545,7 +1705,12 @@ SysCtl_isWatchdogInterruptActive(void)
     //
     // If the status bit is cleared, the WDINTn signal is active.
     //
+#ifndef __TMS320C2000__
     return((HWREGH(WD_BASE + SYSCTL_O_SCSR) & SYSCTL_SCSR_WDINTS) == 0U);
+#else
+    ASSERT(false);
+    return false;
+#endif
 }
 
 //*****************************************************************************
@@ -1566,7 +1731,11 @@ SysCtl_disableWatchdog(void)
     //
     // Set the disable bit.
     //
+#ifndef __TMS320C2000__
     HWREGH(WD_BASE + SYSCTL_O_WDCR) |= SYSCTL_WD_CHKBITS | SYSCTL_WDCR_WDDIS;
+#else
+    SysCtrlRegs->WDCR = SYSCTL_WD_CHKBITS | SYSCTL_WDCR_WDDIS;
+#endif
 
     EDIS;
 }
@@ -1589,8 +1758,12 @@ SysCtl_enableWatchdog(void)
     //
     // Clear the disable bit.
     //
+#ifndef __TMS320C2000__
     HWREGH(WD_BASE + SYSCTL_O_WDCR) = (HWREGH(WD_BASE + SYSCTL_O_WDCR) &
                                        ~SYSCTL_WDCR_WDDIS) | SYSCTL_WD_CHKBITS;
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 }
@@ -1612,8 +1785,12 @@ SysCtl_serviceWatchdog(void)
     //
     // Enable the counter to be reset and then reset it.
     //
+#ifndef __TMS320C2000__
     HWREGH(WD_BASE + SYSCTL_O_WDKEY) = SYSCTL_WD_ENRSTKEY;
     HWREGH(WD_BASE + SYSCTL_O_WDKEY) = SYSCTL_WD_RSTKEY;
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 }
@@ -1635,7 +1812,11 @@ SysCtl_enableWatchdogReset(void)
     //
     // Enable the counter to be reset
     //
+#ifndef __TMS320C2000__
     HWREGH(WD_BASE + SYSCTL_O_WDKEY) = SYSCTL_WD_ENRSTKEY;
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 }
@@ -1657,7 +1838,11 @@ SysCtl_resetWatchdog(void)
     //
     // Reset the watchdog counter
     //
+#ifndef __TMS320C2000__
     HWREGH(WD_BASE + SYSCTL_O_WDKEY) = SYSCTL_WD_RSTKEY;
+#else
+    ASSERT(false);
+#endif
     EDIS;
 }
 
@@ -1678,7 +1863,7 @@ SysCtl_resetWatchdog(void)
 static inline void
 SysCtl_setWatchdogPredivider(SysCtl_WDPredivider predivider)
 {
-    uint16_t regVal;
+    __attribute__((unused)) uint16_t regVal;
 
     regVal = (uint16_t)predivider | (uint16_t)SYSCTL_WD_CHKBITS;
 
@@ -1687,8 +1872,12 @@ SysCtl_setWatchdogPredivider(SysCtl_WDPredivider predivider)
     //
     // Write the predivider to the appropriate register.
     //
+#ifndef __TMS320C2000__
     HWREGH(WD_BASE + SYSCTL_O_WDCR) = (HWREGH(WD_BASE + SYSCTL_O_WDCR) &
                                        ~(SYSCTL_WDCR_WDPRECLKDIV_M)) | regVal;
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 }
@@ -1711,7 +1900,7 @@ SysCtl_setWatchdogPredivider(SysCtl_WDPredivider predivider)
 static inline void
 SysCtl_setWatchdogPrescaler(SysCtl_WDPrescaler prescaler)
 {
-    uint16_t regVal;
+    __attribute__((unused)) uint16_t regVal;
 
     regVal = (uint16_t)prescaler | (uint16_t)SYSCTL_WD_CHKBITS;
 
@@ -1720,8 +1909,12 @@ SysCtl_setWatchdogPrescaler(SysCtl_WDPrescaler prescaler)
     //
     // Write the prescaler to the appropriate register.
     //
+#ifndef __TMS320C2000__
     HWREGH(WD_BASE + SYSCTL_O_WDCR) = (HWREGH(WD_BASE + SYSCTL_O_WDCR) &
                                        ~(SYSCTL_WDCR_WDPS_M)) | regVal;
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 }
@@ -1737,6 +1930,9 @@ SysCtl_setWatchdogPrescaler(SysCtl_WDPrescaler prescaler)
 static inline uint16_t
 SysCtl_getWatchdogCounterValue(void)
 {
+#ifdef __TMS320C2000__
+    ASSERT(false);
+#endif
     //
     // Read and return the value of the watchdog counter.
     //
@@ -1758,6 +1954,9 @@ SysCtl_getWatchdogCounterValue(void)
 static inline bool
 SysCtl_getWatchdogResetStatus(void)
 {
+#ifdef __TMS320C2000__
+    ASSERT(false);
+#endif
     //
     // Read and return the status of the watchdog reset status flag.
     //
@@ -1782,7 +1981,11 @@ SysCtl_clearWatchdogResetStatus(void)
     //
     // Read and return the status of the watchdog reset status flag.
     //
+#ifndef __TMS320C2000__
     HWREGH(CPUSYS_BASE + SYSCTL_O_RESCCLR) = SYSCTL_RESCCLR_WDRSN;
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 }
@@ -1807,7 +2010,11 @@ SysCtl_setWatchdogWindowValue(uint16_t value)
     //
     // Clear the windowed value
     //
+#ifndef __TMS320C2000__
     HWREGH(WD_BASE + SYSCTL_O_WDWCR) &= ~SYSCTL_WDWCR_MIN_M;
+#else
+    ASSERT(false);
+#endif
 
     //
     // Set the windowed value
@@ -1833,7 +2040,11 @@ SysCtl_clearWatchdogOverride(void)
 {
     EALLOW;
 
+#ifndef __TMS320C2000__
     HWREGH(WD_BASE + SYSCTL_O_SCSR) |= SYSCTL_SCSR_WDOVERRIDE;
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 }
@@ -1853,7 +2064,11 @@ SysCtl_enableNMIGlobalInterrupt(void)
 {
     EALLOW;
 
+#ifndef __TMS320C2000__
     HWREGH(NMI_BASE + NMI_O_CFG) |= NMI_CFG_NMIE;
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 }
@@ -1874,7 +2089,12 @@ SysCtl_getNMIStatus(void)
     // Read and return the current value of the NMI flag register, masking out
     // all but the NMI bit.
     //
+#ifndef __TMS320C2000__
     return((HWREGH(NMI_BASE + NMI_O_FLG) & NMI_FLG_NMIINT) != 0U);
+#else
+    ASSERT(false);
+    return false;
+#endif
 }
 
 //*****************************************************************************
@@ -1897,6 +2117,9 @@ SysCtl_getNMIStatus(void)
 static inline uint16_t
 SysCtl_getNMIFlagStatus(void)
 {
+#ifdef __TMS320C2000__
+    ASSERT(false);
+#endif
     //
     // Read and return the current value of the NMI flag register.
     //
@@ -1929,6 +2152,9 @@ SysCtl_getNMIFlagStatus(void)
 static inline bool
 SysCtl_isNMIFlagSet(uint32_t nmiFlags)
 {
+#ifdef __TMS320C2000__
+    ASSERT(false);
+#endif
     //
     // Check the arguments.
     // Make sure if reserved bits are not set in nmiFlags.
@@ -1994,8 +2220,12 @@ SysCtl_clearNMIStatus(uint32_t nmiFlags)
     //
     // Clear the individual flags as well as NMI Interrupt flag
     //
+#ifndef __TMS320C2000__
     HWREGH(NMI_BASE + NMI_O_FLGCLR) = nmiFlags;
     HWREGH(NMI_BASE + NMI_O_FLGCLR) = NMI_FLG_NMIINT;
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 }
@@ -2010,7 +2240,7 @@ SysCtl_clearNMIStatus(uint32_t nmiFlags)
 static inline void
 SysCtl_clearAllNMIFlags(void)
 {
-    uint16_t nmiFlags;
+    __attribute__((unused)) uint16_t nmiFlags;
 
     //
     // Read the flag status register and then write to the clear register,
@@ -2019,8 +2249,12 @@ SysCtl_clearAllNMIFlags(void)
     EALLOW;
 
     nmiFlags = SysCtl_getNMIFlagStatus();
+#ifndef __TMS320C2000__
     HWREGH(NMI_BASE + NMI_O_FLGCLR) = nmiFlags;
     HWREGH(NMI_BASE + NMI_O_FLGCLR) = NMI_FLG_NMIINT;
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 }
@@ -2046,6 +2280,9 @@ SysCtl_clearAllNMIFlags(void)
 static inline void
 SysCtl_forceNMIFlags(uint32_t nmiFlags)
 {
+#ifdef __TMS320C2000__
+    ASSERT(false);
+#endif
     //
     // Check the arguments.
     // Make sure if reserved bits are not set in nmiFlags.
@@ -2086,7 +2323,12 @@ SysCtl_getNMIWatchdogCounter(void)
     //
     // Read and return the NMI watchdog counter register's value.
     //
+#ifndef __TMS320C2000__
     return(HWREGH(NMI_BASE + NMI_O_WDCNT));
+#else
+    ASSERT(false);
+    return 0;
+#endif
 }
 
 //*****************************************************************************
@@ -2113,7 +2355,11 @@ SysCtl_setNMIWatchdogPeriod(uint16_t wdPeriod)
     //
     // Write to the period register.
     //
+#ifndef __TMS320C2000__
     HWREGH(NMI_BASE + NMI_O_WDPRD) = wdPeriod;
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 }
@@ -2128,6 +2374,9 @@ SysCtl_setNMIWatchdogPeriod(uint16_t wdPeriod)
 static inline uint16_t
 SysCtl_getNMIWatchdogPeriod(void)
 {
+#ifdef __TMS320C2000__
+    ASSERT(false);
+#endif
     //
     // Read and return the NMI watchdog period register's value.
     //
@@ -2154,6 +2403,9 @@ SysCtl_getNMIWatchdogPeriod(void)
 static inline uint32_t
 SysCtl_getNMIShadowFlagStatus(void)
 {
+#ifdef __TMS320C2000__
+    ASSERT(false);
+#endif
     //
     // Read and return the current value of the NMI shadow flag register.
     //
@@ -2186,6 +2438,9 @@ SysCtl_getNMIShadowFlagStatus(void)
 static inline bool
 SysCtl_isNMIShadowFlagSet(uint32_t nmiFlags)
 {
+#ifdef __TMS320C2000__
+    ASSERT(false);
+#endif
     //
     // Check the arguments.
     // Make sure if reserved bits are not set in nmiFlags.
@@ -2218,7 +2473,11 @@ SysCtl_enableMCD(void)
 {
     EALLOW;
 
+#ifndef __TMS320C2000__
     HWREGH(CLKCFG_BASE + SYSCTL_O_MCDCR) &= ~(SYSCTL_MCDCR_MCLKOFF);
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 }
@@ -2235,7 +2494,11 @@ SysCtl_disableMCD(void)
 {
     EALLOW;
 
+#ifndef __TMS320C2000__
     HWREGH(CLKCFG_BASE + SYSCTL_O_MCDCR) |= SYSCTL_MCDCR_MCLKOFF;
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 }
@@ -2256,7 +2519,11 @@ SysCtl_isMCDClockFailureDetected(void)
     //
     //  Check the status bit to determine failure
     //
+#ifndef __TMS320C2000__
     return((HWREGH(CLKCFG_BASE + SYSCTL_O_MCDCR) & SYSCTL_MCDCR_MCLKSTS) != 0U);
+#else
+    return SysCtrlRegs->PLLSTS.bit.MCLKSTS != 0U;
+#endif
 }
 
 //*****************************************************************************
@@ -2271,7 +2538,11 @@ SysCtl_resetMCD(void)
 {
     EALLOW;
 
+#ifndef __TMS320C2000__
     HWREGH(CLKCFG_BASE + SYSCTL_O_MCDCR) |= SYSCTL_MCDCR_MCLKCLR;
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 }
@@ -2289,7 +2560,11 @@ SysCtl_connectMCDClockSource(void)
 {
     EALLOW;
 
+#ifndef __TMS320C2000__
     HWREGH(CLKCFG_BASE + SYSCTL_O_MCDCR) &= ~(SYSCTL_MCDCR_OSCOFF);
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 }
@@ -2307,7 +2582,11 @@ SysCtl_disconnectMCDClockSource(void)
 {
     EALLOW;
 
+#ifndef __TMS320C2000__
     HWREGH(CLKCFG_BASE + SYSCTL_O_MCDCR) |= SYSCTL_MCDCR_OSCOFF;
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 }
@@ -2329,8 +2608,12 @@ SysCtl_lockAccessControlRegs(void)
 {
     EALLOW;
 
+#ifndef __TMS320C2000__
     HWREGH(PERIPHAC_BASE + SYSCTL_O_PERIPH_AC_LOCK) |=
         SYSCTL_PERIPH_AC_LOCK_LOCK_AC_WR;
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 }
@@ -2376,10 +2659,14 @@ SysCtl_setPeripheralAccessControl(SysCtl_AccessPeripheral peripheral,
     //
     EALLOW;
 
+#ifndef __TMS320C2000__
     HWREGH(PERIPHAC_BASE + (uint16_t)peripheral) =
         (HWREGH(PERIPHAC_BASE + (uint16_t)peripheral) &
          ~(0x3U << (uint16_t)master)) |
         ((uint32_t)permission << (uint16_t)master);
+#else
+    ASSERT(false);
+#endif
 
     EDIS;
 }
@@ -2415,6 +2702,9 @@ static inline uint32_t
 SysCtl_getPeripheralAccessControl(SysCtl_AccessPeripheral peripheral,
                                   SysCtl_AccessMaster master)
 {
+#ifdef __TMS320C2000__
+    ASSERT(false);
+#endif
     //
     // Read master permissions for specified peripheral. Each master has
     // two bits dedicated to its permission setting.
@@ -2459,6 +2749,9 @@ SysCtl_setSyncInputConfig(SysCtl_SyncInput syncInput,
     // Write the input sync source selection to the appropriate register.
     //
     EALLOW;
+#ifdef __TMS320C2000__
+    ASSERT(false);
+#endif
     if(syncInput == SYSCTL_SYNC_IN_EPWM1)
     {
         //
@@ -2498,6 +2791,9 @@ SysCtl_setSyncOutputConfig(SysCtl_SyncOutputSource syncSrc)
     //
     // Write the sync output source selection to the appropriate register.
     //
+#ifdef __TMS320C2000__
+    ASSERT(false);
+#endif
     EALLOW;
     HWREG(SYNCSOC_BASE + SYSCTL_O_SYNCSELECT) =
         (HWREG(SYNCSOC_BASE + SYSCTL_O_SYNCSELECT) &
@@ -2526,6 +2822,9 @@ SysCtl_enableExtADCSOCSource(uint32_t adcsocSrc)
     //
     // Set the bits that correspond to signal to be enabled.
     //
+#ifdef __TMS320C2000__
+    ASSERT(false);
+#endif
     EALLOW;
     HWREG(SYNCSOC_BASE + SYSCTL_O_ADCSOCOUTSELECT) |= adcsocSrc;
     EDIS;
@@ -2551,6 +2850,9 @@ SysCtl_disableExtADCSOCSource(uint32_t adcsocSrc)
     //
     // Clear the bits that correspond to signal to be disabled.
     //
+#ifdef __TMS320C2000__
+    ASSERT(false);
+#endif
     EALLOW;
     HWREG(SYNCSOC_BASE + SYSCTL_O_ADCSOCOUTSELECT) &= ~adcsocSrc;
     EDIS;
@@ -2571,6 +2873,9 @@ SysCtl_lockExtADCSOCSelect(void)
     //
     // Lock the ADCSOCOUTSELECT bit of the SYNCSOCLOCK register.
     //
+#ifdef __TMS320C2000__
+    ASSERT(false);
+#endif
     EALLOW;
     HWREG(SYNCSOC_BASE + SYSCTL_O_SYNCSOCLOCK) =
         SYSCTL_SYNCSOCLOCK_ADCSOCOUTSELECT;
@@ -2592,6 +2897,9 @@ SysCtl_lockSyncSelect(void)
     //
     // Lock the SYNCSELECT register.
     //
+#ifdef __TMS320C2000__
+    ASSERT(false);
+#endif
     EALLOW;
     HWREG(SYNCSOC_BASE + SYSCTL_O_SYNCSOCLOCK) = SYSCTL_SYNCSOCLOCK_SYNCSELECT;
     EDIS;
@@ -2613,6 +2921,9 @@ SysCtl_getDeviceRevision(void)
     //
     // Returns the device silicon revision ID
     //
+#ifdef __TMS320C2000__
+    ASSERT(false);
+#endif
     return(HWREG(DEVCFG_BASE + SYSCTL_O_REVID));
 }
 
@@ -2632,6 +2943,9 @@ SysCtl_getDeviceRevision(void)
 static inline uint16_t
 SysCtl_getEfuseError(void)
 {
+#ifdef __TMS320C2000__
+    ASSERT(false);
+#endif
     return(HWREGH(DEVCFG_BASE + SYSCTL_O_FUSEERR));
 }
 
@@ -2657,6 +2971,9 @@ SysCtl_setXClk(SysCtl_XClkDivider divider)
     // Clears the divider then configures it.
     //
     EALLOW;
+#ifdef __TMS320C2000__
+    ASSERT(false);
+#endif
     HWREGH(CLKCFG_BASE + SYSCTL_O_XCLKOUTDIVSEL) =
                         (HWREGH(CLKCFG_BASE + SYSCTL_O_XCLKOUTDIVSEL) &
                          ~(SYSCTL_XCLKOUTDIVSEL_XCLKOUTDIV_M)) |
@@ -2691,6 +3008,9 @@ SysCtl_setXClk(SysCtl_XClkDivider divider)
 static inline void
 SysCtl_setPLLSysClk(uint16_t divider)
 {
+#ifdef __TMS320C2000__
+    ASSERT(false);
+#endif
     //
     // Clears the divider then configures it.
     //
@@ -2724,6 +3044,9 @@ static inline void
 SysCtl_setCputimer2Clk(SysCtl_Cputimer2ClkDivider divider,
                                SysCtl_Cputimer2ClkSource source)
 {
+#ifdef __TMS320C2000__
+    ASSERT(false);
+#endif
   //
     // Clears the divider & the source, then configures it.
     //
@@ -2756,6 +3079,9 @@ SysCtl_setCputimer2Clk(SysCtl_Cputimer2ClkDivider divider,
 static inline uint32_t
 SysCtl_getPIEVErrAddr(void)
 {
+#ifdef __TMS320C2000__
+    ASSERT(false);
+#endif
     return(HWREG(CPUSYS_BASE + SYSCTL_O_PIEVERRADDR));
 }
 
