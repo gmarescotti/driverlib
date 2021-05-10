@@ -72,10 +72,7 @@ extern "C"
 #include "interrupt.h"
 
 #ifdef __TMS320C2000__
-#pragma diag_suppress 303 // avoid typedef redefined warning
-typedef uint16_t Uint16;
 #include "porting/port_F2806x_SysCtrl.h"
-#pragma diag_default 303
 #endif
 
 //*****************************************************************************
@@ -930,6 +927,7 @@ SysCtl_enablePeripheral(SysCtl_PeripheralPCLOCKCR peripheral)
         break;
     default:
         ASSERT(false); // can't understand peripheral!
+        break;
     }
 #else
     HWREG(CPUSYS_BASE + SYSCTL_O_PCLKCR0 + regIndex) |=
