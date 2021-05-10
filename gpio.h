@@ -214,8 +214,10 @@ typedef enum
     GPIO_INT_XINT1,                     //!< External Interrupt 1
     GPIO_INT_XINT2,                     //!< External Interrupt 2
     GPIO_INT_XINT3,                     //!< External Interrupt 3
+#ifndef __TMS320C2000__
     GPIO_INT_XINT4,                     //!< External Interrupt 4
     GPIO_INT_XINT5                      //!< External Interrupt 5
+#endif
 } GPIO_ExternalIntNum;
 
 //*****************************************************************************

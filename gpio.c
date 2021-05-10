@@ -139,7 +139,7 @@ GPIO_setInterruptPin(uint32_t pin, GPIO_ExternalIntNum extIntNum)
         case GPIO_INT_XINT3:
             input = XBAR_INPUT6;
             break;
-
+#ifndef __TMS320C2000__
         case GPIO_INT_XINT4:
             input = XBAR_INPUT13;
             break;
@@ -147,7 +147,7 @@ GPIO_setInterruptPin(uint32_t pin, GPIO_ExternalIntNum extIntNum)
         case GPIO_INT_XINT5:
             input = XBAR_INPUT14;
             break;
-
+#endif
         default:
             //
             // Invalid interrupt. Shouldn't happen if enum value is used.
