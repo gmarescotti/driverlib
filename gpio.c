@@ -116,6 +116,7 @@ GPIO_getDirectionMode(uint32_t pin)
 void
 GPIO_setInterruptPin(uint32_t pin, GPIO_ExternalIntNum extIntNum)
 {
+#ifndef __TMS320C2000__
     XBAR_InputNum input;
 
     //
@@ -139,7 +140,6 @@ GPIO_setInterruptPin(uint32_t pin, GPIO_ExternalIntNum extIntNum)
         case GPIO_INT_XINT3:
             input = XBAR_INPUT6;
             break;
-#ifndef __TMS320C2000__
         case GPIO_INT_XINT4:
             input = XBAR_INPUT13;
             break;
@@ -147,7 +147,6 @@ GPIO_setInterruptPin(uint32_t pin, GPIO_ExternalIntNum extIntNum)
         case GPIO_INT_XINT5:
             input = XBAR_INPUT14;
             break;
-#endif
         default:
             //
             // Invalid interrupt. Shouldn't happen if enum value is used.
@@ -162,6 +161,15 @@ GPIO_setInterruptPin(uint32_t pin, GPIO_ExternalIntNum extIntNum)
     {
         XBAR_setInputPin(input, (uint16_t)pin);
     }
+#else
+    volatile uint16_t *gpiointBaseAddr = (uint16_t *)GPIOINTR_BASE;
+
+    ASSERT(pin < 32); // sorry pin > 31 can't use interrupt!
+    EALLOW;
+    gpiointBaseAddr[extIntNum] = pin;
+    EDIS;
+
+#endif
 }
 
 //*****************************************************************************

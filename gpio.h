@@ -211,7 +211,7 @@ typedef enum
 //*****************************************************************************
 typedef enum
 {
-    GPIO_INT_XINT1,                     //!< External Interrupt 1
+    GPIO_INT_XINT1=0,                     //!< External Interrupt 1
     GPIO_INT_XINT2,                     //!< External Interrupt 2
     GPIO_INT_XINT3,                     //!< External Interrupt 3
 #ifndef __TMS320C2000__

@@ -171,6 +171,7 @@
 #else
 #define GPIOCTRL_BASE             0x00006F80U
 #define GPIODATA_BASE             0x00006FC0U
+#define GPIOINTR_BASE             0x00006FE0U
 #endif
 #define LS0_RAM_BASE              0x00008000U
 #define LS1_RAM_BASE              0x00008800U
