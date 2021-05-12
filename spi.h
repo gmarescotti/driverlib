@@ -177,10 +177,10 @@ typedef enum
     SPI_FIFO_RX15       = 0x000FU,      //!< Receive FIFO 15/16 full
     SPI_FIFO_RX16       = 0x0010U,      //!< Receive FIFO full
     SPI_FIFO_RXFULL     = 0x0010U,      //!< Receive FIFO full
-    SPI_FIFO_RXDEFAULT  = 0x000FU       //!< To prevent interrupt at reset
+    SPI_FIFO_RXDEFAULT  = 0x001FU       //!< To prevent interrupt at reset
 #else
     SPI_FIFO_RXFULL     = 0x0004U,       //!< Transmit FIFO full
-    SPI_FIFO_RXDEFAULT  = 0x001FU,       //!< To prevent interrupt at reset
+    SPI_FIFO_RXDEFAULT  = 0x000FU,       //!< To prevent interrupt at reset
 #endif
 } SPI_RxFIFOLevel;
 
