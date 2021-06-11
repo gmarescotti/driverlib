@@ -790,10 +790,8 @@ CAN_readMessage(uint32_t base, uint32_t objID,
 
     objID--;
 
-    msgData[0] = mboxes[objID].MDL.word.LOW_WORD;
-    msgData[1] = mboxes[objID].MDL.word.HI_WORD;
-    msgData[2] = mboxes[objID].MDH.word.LOW_WORD;
-    msgData[3] = mboxes[objID].MDH.word.HI_WORD;
+    *(Uint32*)&msgData[0] = mboxes[objID].MDH.all;
+    *(Uint32*)&msgData[2] = mboxes[objID].MDL.all;
 
     return(status);
 #endif
