@@ -99,7 +99,7 @@ CAN_initModule(uint32_t base)
 
     ECanaShadow.CANMC.all = pECanaRegs->CANMC.all;
     ECanaShadow.CANMC.bit.SCB = 1;
-    ECanaShadow.CANMC.bit.ABO = 1;
+    ECanaShadow.CANMC.bit.ABO = 0;
     pECanaRegs->CANMC.all = ECanaShadow.CANMC.all;
 
     /* Initialize all bits of 'Message Control Register' to zero */
@@ -701,6 +701,26 @@ CAN_sendMessage(uint32_t base, uint32_t objID, uint16_t msgLen,
     struct ECAN_REGS ECanaShadow;
 
     objID--;
+
+    //!< don't stuck in CANTA wait if bus-off
+    if ((
+            pECanaRegs->CANES.bit.BO == 1)      // There is an abnormal rate of errors on the CAN bus. This condition occurs when the transmit error
+                                                // counter (CANTEC) has reached the limit of 256. During Bus Off, no messages can be received or
+                                                // transmitted. The bus-off state can be exited by clearing the CCR bit in CANMC register or if the
+                                                // Auto Bus On (ABO) (CANMC.7) bit is set, after 128 * 11 receive bits have been received. After
+                                                // leaving Bus Off, the error counters are cleared.
+            || (pECanaRegs->CANES.bit.ACKE == 1)) // The CAN module received no acknowledge.
+        return;
+
+    //!< wait previous transmission to be completed
+    uint32_t timeout=10000;
+    do {
+        ECanaShadow.CANTA.all = pECanaRegs->CANTA.all;
+        if(--timeout == 0U) {break;}
+    } while((ECanaShadow.CANTA.all & (1ul << objID)) == 0);
+
+    ECanaShadow.CANTA.all = 1ul << objID;       /* Clear TA bit */
+    pECanaRegs->CANTA.all = ECanaShadow.CANTA.all;
 
     mboxes[objID].MDH.all = *(Uint32*)&msgData[0];
     mboxes[objID].MDL.all = *(Uint32*)&msgData[2];
