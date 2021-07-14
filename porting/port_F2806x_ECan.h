@@ -40,8 +40,8 @@
 // $
 //###########################################################################
 
-#ifndef F2806x_ECAN_H
-#define F2806x_ECAN_H
+#ifndef PORT_F2806x_ECAN_H
+#define PORT_F2806x_ECAN_H
 
 
 #ifdef __cplusplus

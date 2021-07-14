@@ -162,7 +162,7 @@ SysCtl_getClock(uint32_t clockInHz)
            (oscSource == ((uint32_t)SYSCTL_OSCSRC_OSC1 >> SYSCTL_OSCSRC_S)))
 #else
         // oscSource = SysCtrlRegs->CLKCTL.bit.OSCCLKSRCSEL | SysCtrlRegs->CLKCTL.bit.OSCCLKSRC2SEL;
-        oscSource = SysCtrlRegs->CLKCTL.bit.OSCCLKSRC2SEL;
+        oscSource = pSysCtrlRegs->CLKCTL.bit.OSCCLKSRC2SEL;
 
         if(oscSource != 0)
 #endif
@@ -208,17 +208,17 @@ SysCtl_getClock(uint32_t clockInHz)
                                SYSCTL_SYSCLKDIVSEL_PLLSYSCLKDIV_M));
         }
 #else
-        if(SysCtrlRegs->PLLCR.bit.DIV != 0)
+        if(pSysCtrlRegs->PLLCR.bit.DIV != 0)
         {
             //
             // Calculate portion from fractional multiplier
             //
-            temp = (clockInHz * SysCtrlRegs->PLLSTS.bit.DIVSEL) / 4U;
+            temp = (clockInHz * pSysCtrlRegs->PLLSTS.bit.DIVSEL) / 4U;
 
             //
             // Calculate integer multiplier and fixed divide by 2
             //
-            clockOut = clockOut * SysCtrlRegs->PLLCR.bit.DIV / 4;
+            clockOut = clockOut * pSysCtrlRegs->PLLCR.bit.DIV / 4;
 
             //
             // Add in fractional portion
@@ -307,7 +307,7 @@ SysCtl_setClock(uint32_t config)
         mult |= (uint16_t)(HWREG(CLKCFG_BASE + SYSCTL_O_SYSPLLMULT) &
                                  SYSCTL_SYSPLLMULT_FMULT_M);
 #else
-        mult  = SysCtrlRegs->PLLCR.bit.DIV;
+        mult  = pSysCtrlRegs->PLLCR.bit.DIV;
 #endif
 
         //
@@ -330,9 +330,9 @@ SysCtl_setClock(uint32_t config)
                 // DIVSEL MUST be 0 before PLLCR can be changed from
                 // 0x0000. It is set to 0 by an external reset XRSn
                 // This puts us in 1/4
-                if (SysCtrlRegs->PLLSTS.bit.DIVSEL != 0)
+                if (pSysCtrlRegs->PLLSTS.bit.DIVSEL != 0)
                 {
-                    SysCtrlRegs->PLLSTS.bit.DIVSEL = 0;
+                    pSysCtrlRegs->PLLSTS.bit.DIVSEL = 0;
                 }
 #endif
                 EDIS;
@@ -342,16 +342,16 @@ SysCtl_setClock(uint32_t config)
                 // Before setting PLLCR turn off missing clock detect logic
                 //
                 EALLOW;
-                SysCtrlRegs->PLLSTS.bit.MCLKOFF = 1;
-                SysCtrlRegs->PLLCR.bit.DIV = pllMult;
+                pSysCtrlRegs->PLLSTS.bit.MCLKOFF = 1;
+                pSysCtrlRegs->PLLCR.bit.DIV = pllMult;
                 EDIS;
 
-                while(SysCtrlRegs->PLLSTS.bit.PLLLOCKS != 1) {
+                while(pSysCtrlRegs->PLLSTS.bit.PLLLOCKS != 1) {
                     // wait..
                 }
 
                 EALLOW;
-                SysCtrlRegs->PLLSTS.bit.MCLKOFF = 0;
+                pSysCtrlRegs->PLLSTS.bit.MCLKOFF = 0;
                 EDIS;
 
                 status = true; // CHECK PLL?
@@ -439,7 +439,7 @@ SysCtl_setClock(uint32_t config)
             if((divSel == 1)||(divSel == 2))
             {
                 EALLOW;
-                SysCtrlRegs->PLLSTS.bit.DIVSEL = divSel;
+                pSysCtrlRegs->PLLSTS.bit.DIVSEL = divSel;
                 EDIS;
             }
 
@@ -452,9 +452,9 @@ SysCtl_setClock(uint32_t config)
             if(divSel == 3)
             {
                 EALLOW;
-                SysCtrlRegs->PLLSTS.bit.DIVSEL = 2;
+                pSysCtrlRegs->PLLSTS.bit.DIVSEL = 2;
                 SysCtl_delay(50L);
-                SysCtrlRegs->PLLSTS.bit.DIVSEL = 3;
+                pSysCtrlRegs->PLLSTS.bit.DIVSEL = 3;
                 EDIS;
             }
 #else
@@ -571,28 +571,28 @@ SysCtl_selectXTAL(void)
     }
 #else
     EALLOW;
-    SysCtrlRegs->CLKCTL.bit.XTALOSCOFF = 0;     // Turn on XTALOSC
+    pSysCtrlRegs->CLKCTL.bit.XTALOSCOFF = 0;     // Turn on XTALOSC
 
     //
     // Wait for 1ms while XTAL starts up
     //
     DEVICE_DELAY_US(1000u);
 
-    SysCtrlRegs->CLKCTL.bit.XCLKINOFF = 1;      // Turn off XCLKIN
-    SysCtrlRegs->CLKCTL.bit.OSCCLKSRC2SEL = 0;  // Switch to external clock
+    pSysCtrlRegs->CLKCTL.bit.XCLKINOFF = 1;      // Turn off XCLKIN
+    pSysCtrlRegs->CLKCTL.bit.OSCCLKSRC2SEL = 0;  // Switch to external clock
 
     //
     // Switch from INTOSC1 to INTOSC2/ext clk
     //
-    SysCtrlRegs->CLKCTL.bit.OSCCLKSRCSEL = 1;
+    pSysCtrlRegs->CLKCTL.bit.OSCCLKSRCSEL = 1;
 
     //
     // Clock Watchdog off of INTOSC1 always
     //
-    SysCtrlRegs->CLKCTL.bit.WDCLKSRCSEL = 0;
+    pSysCtrlRegs->CLKCTL.bit.WDCLKSRCSEL = 0;
 
-    SysCtrlRegs->CLKCTL.bit.INTOSC2OFF = 1;     // Turn off INTOSC2
-    SysCtrlRegs->CLKCTL.bit.INTOSC1OFF = 0;     // Leave INTOSC1 on
+    pSysCtrlRegs->CLKCTL.bit.INTOSC2OFF = 1;     // Turn off INTOSC2
+    pSysCtrlRegs->CLKCTL.bit.INTOSC1OFF = 0;     // Leave INTOSC1 on
     EDIS;
 #endif
 }
@@ -755,7 +755,7 @@ SysCtl_getLowSpeedClock(uint32_t clockInHz)
                             SYSCTL_LOSPCP_LSPCLKDIV_M));
     }
 #else
-    if(SysCtrlRegs->LOSPCP.bit.LSPCLK != 0)
+    if(pSysCtrlRegs->LOSPCP.bit.LSPCLK != 0)
     {
         //clockOut /= (2U * SysCtrlRegs->LOSPCP.bit.LSPCLK);
     }

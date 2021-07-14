@@ -40,8 +40,8 @@
 // $
 //###########################################################################
 
-#ifndef F2806x_SYSCTRL_H
-#define F2806x_SYSCTRL_H
+#ifndef PORT_F2806x_SYSCTRL_H
+#define PORT_F2806x_SYSCTRL_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -599,7 +599,7 @@ struct FLASH_REGS
 //
 // Sysctrl External References & Function Declarations:
 //
-static volatile struct SYS_CTRL_REGS *SysCtrlRegs = (struct SYS_CTRL_REGS*)0x7010;
+static volatile struct SYS_CTRL_REGS *pSysCtrlRegs = (struct SYS_CTRL_REGS*)0x7010;
 
 extern volatile struct SYS_PWR_CTRL_REGS SysPwrCtrlRegs;
 extern volatile struct CSM_PWL CsmPwl;

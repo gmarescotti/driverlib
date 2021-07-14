@@ -781,7 +781,7 @@ static inline void
 SysCtl_deviceCal(void)
 {
 #ifdef __TMS320C2000__
-    SysCtrlRegs->PCLKCR0.bit.ADCENCLK = 1; // Enable ADC peripheral clock
+    pSysCtrlRegs->PCLKCR0.bit.ADCENCLK = 1; // Enable ADC peripheral clock
 #endif
 
     //
@@ -812,7 +812,7 @@ SysCtl_deviceCal(void)
     asm(" POP ACC");
 
 #ifdef __TMS320C2000__
-    SysCtrlRegs->PCLKCR0.bit.ADCENCLK = 0; // Return ADC clock to original state
+    pSysCtrlRegs->PCLKCR0.bit.ADCENCLK = 0; // Return ADC clock to original state
 #endif
 }
 
@@ -914,16 +914,16 @@ SysCtl_enablePeripheral(SysCtl_PeripheralPCLOCKCR peripheral)
 #ifdef _TMS320C2000
     switch (regIndex) {
     case 0:
-        SysCtrlRegs->PCLKCR0.all |= ((uint32_t)1U << bitIndex);
+        pSysCtrlRegs->PCLKCR0.all |= ((uint32_t)1U << bitIndex);
         break;
     case 2:
-        SysCtrlRegs->PCLKCR1.all |= ((uint32_t)1U << bitIndex);
+        pSysCtrlRegs->PCLKCR1.all |= ((uint32_t)1U << bitIndex);
         break;
     case 4:
-        SysCtrlRegs->PCLKCR2.all |= ((uint32_t)1U << bitIndex);
+        pSysCtrlRegs->PCLKCR2.all |= ((uint32_t)1U << bitIndex);
         break;
     case 6:
-        SysCtrlRegs->PCLKCR3.all |= ((uint32_t)1U << bitIndex);
+        pSysCtrlRegs->PCLKCR3.all |= ((uint32_t)1U << bitIndex);
         break;
     default:
         ASSERT(false); // can't understand peripheral!
@@ -1135,12 +1135,12 @@ SysCtl_setLowSpeedClock(SysCtl_LSPCLKPrescaler prescaler)
     // LOSPCP prescale register settings, normally it will be set to default
     // values
     //
-    SysCtrlRegs->LOSPCP.bit.LSPCLK = prescaler;
+    pSysCtrlRegs->LOSPCP.bit.LSPCLK = prescaler;
 
     //
     // XCLKOUT to SYSCLKOUT ratio.  By default XCLKOUT = 1/4 SYSCLKOUT
     //
-    SysCtrlRegs->XCLK.bit.XCLKOUTDIV = 2;
+    pSysCtrlRegs->XCLK.bit.XCLKOUTDIV = 2;
 
 #else
     HWREG(CLKCFG_BASE + SYSCTL_O_LOSPCP) =
@@ -1732,7 +1732,7 @@ SysCtl_disableWatchdog(void)
 #ifndef __TMS320C2000__
     HWREGH(WD_BASE + SYSCTL_O_WDCR) |= SYSCTL_WD_CHKBITS | SYSCTL_WDCR_WDDIS;
 #else
-    SysCtrlRegs->WDCR = SYSCTL_WD_CHKBITS | SYSCTL_WDCR_WDDIS;
+    pSysCtrlRegs->WDCR = SYSCTL_WD_CHKBITS | SYSCTL_WDCR_WDDIS;
 #endif
 
     EDIS;
@@ -2520,7 +2520,7 @@ SysCtl_isMCDClockFailureDetected(void)
 #ifndef __TMS320C2000__
     return((HWREGH(CLKCFG_BASE + SYSCTL_O_MCDCR) & SYSCTL_MCDCR_MCLKSTS) != 0U);
 #else
-    return SysCtrlRegs->PLLSTS.bit.MCLKSTS != 0U;
+    return pSysCtrlRegs->PLLSTS.bit.MCLKSTS != 0U;
 #endif
 }
 
