@@ -70,8 +70,10 @@ static inline void __error__(char *filename, uint32_t line) {
                          }                                                    \
                      }                                                        \
                      while(0)
+#define STATIC
 #else
 #define ASSERT(expr)
+#define STATIC static
 #endif
 
 #endif // DEBUG_H
