@@ -320,6 +320,7 @@
 #define GPIO_31_SD1_C4                  0x00081E07U
 #define GPIO_31_FSIRXA_D1               0x00081E09U
 
+#ifndef __TMS320C2000__
 #define GPIO_32_GPIO32                  0x00460000U
 #define GPIO_32_I2CA_SDA                0x00460001U
 #define GPIO_32_SPIB_CLK                0x00460003U
@@ -404,6 +405,92 @@
 
 #define GPIO_47_GPIO47                  0x00461E00U
 #define GPIO_47_LINA_RX                 0x00461E03U
+#else
+#define GPIO_32_GPIO32                  0x00160000U
+#define GPIO_32_I2CA_SDA                0x00160001U
+#define GPIO_32_SPIB_CLK                0x00160003U
+#define GPIO_32_EPWM8_B                 0x00160005U
+#define GPIO_32_LINA_TX                 0x00160006U
+#define GPIO_32_SD1_D3                  0x00160007U
+#define GPIO_32_FSIRXA_D0               0x00160009U
+#define GPIO_32_CANA_TX                 0x0016000AU
+
+#define GPIO_33_GPIO33                  0x00160200U
+#define GPIO_33_I2CA_SCL                0x00160201U
+#define GPIO_33_SPIB_STE                0x00160203U
+#define GPIO_33_OUTPUTXBAR4             0x00160205U
+#define GPIO_33_LINA_RX                 0x00160206U
+#define GPIO_33_SD1_C3                  0x00160207U
+#define GPIO_33_FSIRXA_CLK              0x00160209U
+#define GPIO_33_CANA_RX                 0x0016020AU
+
+#define GPIO_34_GPIO34                  0x00160400U
+#define GPIO_34_OUTPUTXBAR1             0x00160401U
+#define GPIO_34_PMBUSA_SDA              0x00160406U
+
+#define GPIO_35_GPIO35                  0x00160600U
+#define GPIO_35_SCIA_RX                 0x00160601U
+#define GPIO_35_I2CA_SDA                0x00160603U
+#define GPIO_35_CANA_RX                 0x00160605U
+#define GPIO_35_PMBUSA_SCL              0x00160606U
+#define GPIO_35_LINA_RX                 0x00160607U
+#define GPIO_35_EQEP1_A                 0x00160609U
+#define GPIO_35_PMBUSA_CTL              0x0016060AU
+#define GPIO_35_TDI                     0x0016060FU
+
+#define GPIO_37_GPIO37                  0x00160A00U
+#define GPIO_37_OUTPUTXBAR2             0x00160A01U
+#define GPIO_37_I2CA_SCL                0x00160A03U
+#define GPIO_37_SCIA_TX                 0x00160A05U
+#define GPIO_37_CANA_TX                 0x00160A06U
+#define GPIO_37_LINA_TX                 0x00160A07U
+#define GPIO_37_EQEP1_B                 0x00160A09U
+#define GPIO_37_PMBUSA_ALERT            0x00160A0AU
+#define GPIO_37_TDO                     0x00160A0FU
+
+#define GPIO_39_GPIO39                  0x00160E00U
+#define GPIO_39_CANB_RX                 0x00160E06U
+#define GPIO_39_FSIRXA_CLK              0x00160E07U
+
+#define GPIO_40_GPIO40                  0x00161000U
+#define GPIO_40_PMBUSA_SDA              0x00161006U
+#define GPIO_40_FSIRXA_D0               0x00161007U
+#define GPIO_40_SCIB_TX                 0x0016100AU
+//#define GPIO_40_EQEP1_A                 0x0016100AU
+
+#define GPIO_41_GPIO41                  0x00161200U
+#define GPIO_41_PMBUSA_SCL              0x00161206U
+#define GPIO_41_FSIRXA_D1               0x00161207U
+#define GPIO_41_SCIB_RX                 0x0016120AU
+//#define GPIO_41_EQEP1_B                 0x0016120AU
+
+#define GPIO_42_GPIO42                  0x00161400U
+#define GPIO_42_OUTPUTXBAR5             0x00161403U
+#define GPIO_42_PMBUSA_CTL              0x00161405U
+#define GPIO_42_I2CA_SDA                0x00161406U
+#define GPIO_42_EQEP1_STROBE            0x0016140AU
+
+#define GPIO_43_GPIO43                  0x00161600U
+#define GPIO_43_OUTPUTXBAR6             0x00161603U
+#define GPIO_43_PMBUSA_ALERT            0x00161605U
+#define GPIO_43_I2CA_SCL                0x00161606U
+#define GPIO_43_EQEP1_INDEX             0x0016160AU
+
+#define GPIO_44_GPIO44                  0x00161800U
+#define GPIO_44_OUTPUTXBAR7             0x00161803U
+#define GPIO_44_FSITXA_CLK              0x00161807U
+
+#define GPIO_45_GPIO45                  0x00161A00U
+#define GPIO_45_OUTPUTXBAR8             0x00161A03U
+#define GPIO_45_FSITXA_D0               0x00161A07U
+
+#define GPIO_46_GPIO46                  0x00161C00U
+#define GPIO_46_LINA_TX                 0x00161C03U
+#define GPIO_46_FSITXA_D1               0x00161C07U
+
+#define GPIO_47_GPIO47                  0x00161E00U
+#define GPIO_47_LINA_RX                 0x00161E03U
+#endif
 
 #define GPIO_48_GPIO48                  0x00480000U
 #define GPIO_48_OUTPUTXBAR3             0x00480001U

@@ -148,9 +148,15 @@
 #define WD_BASE                   0x00007000U
 #define NMI_BASE                  0x00007060U
 #define XINT_BASE                 0x00007070U
+#ifndef __TMS320C2000__
 #define SCIA_BASE                 0x00007200U
 #define SCIB_BASE                 0x00007210U
 #define I2CA_BASE                 0x00007300U
+#else
+#define SCIA_BASE                 0x00007050U
+#define SCIB_BASE                 0x00007750U
+#define I2CA_BASE                 0x00007900U
+#endif
 #define ADCA_BASE                 0x00007400U
 #define ADCB_BASE                 0x00007480U
 #define ADCC_BASE                 0x00007500U
