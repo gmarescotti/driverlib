@@ -119,7 +119,7 @@ SCI_writeCharArray(uint32_t base, const uint16_t * const array,
             //
             // Wait until space is available in the transmit FIFO.
             //
-            while(SCI_getTxFIFOStatus(base) == SCI_FIFO_TX3)
+            while(SCI_getTxFIFOStatus(base) == SCI_FIFO_TXFULL)
             {
             }
 
@@ -148,6 +148,71 @@ SCI_writeCharArray(uint32_t base, const uint16_t * const array,
             // Send a char.
             //
             HWREGH(base + SCI_O_TXBUF) = array[i];
+        }
+    }
+}
+
+//*****************************************************************************
+//
+// SCI_writeCharArray
+//
+//*****************************************************************************
+int queue;
+void
+SCI_writeByteArray(uint32_t base, const uint16_t * const array,
+                   uint16_t length)
+{
+    //
+    // Check the arguments.
+    //
+    ASSERT(SCI_isBaseValid(base));
+
+    uint16_t i;
+    //
+    // Check if FIFO enhancement is enabled.
+    //
+    if(SCI_isFIFOEnabled(base))
+    {
+        //
+        // FIFO is enabled.
+        // For loop to write (Blocking) 'length' number of characters
+        //
+        for(i = 0U; i < length; i++)
+        {
+            //
+            // Wait until space is available in the transmit FIFO.
+            //
+            queue = SCI_getTxFIFOStatus(base);
+            while(queue == SCI_FIFO_TX1) // FULL)
+            {
+                queue = SCI_getTxFIFOStatus(base);
+            }
+
+            //
+            // Send a char.
+            //
+            HWREGH(base + SCI_O_TXBUF) = __byte((int*)array, i);
+        }
+    }
+    else
+    {
+        //
+        // FIFO is not enabled.
+        // For loop to write (Blocking) 'length' number of characters
+        //
+        for(i = 0U; i < length; i++)
+        {
+            //
+            // Wait until space is available in the transmit buffer.
+            //
+            while(!SCI_isSpaceAvailableNonFIFO(base))
+            {
+            }
+
+            //
+            // Send a char.
+            //
+            HWREGH(base + SCI_O_TXBUF) = __byte((int*)array, i);
         }
     }
 }

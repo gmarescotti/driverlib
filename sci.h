@@ -134,7 +134,6 @@ typedef enum
     SCI_FIFO_TX2  = 0x0002U, //!< Transmit interrupt 2/16 full
     SCI_FIFO_TX3  = 0x0003U, //!< Transmit interrupt 3/16 full
     SCI_FIFO_TX4  = 0x0004U, //!< Transmit interrupt 4/16 full
-#ifndef __TMS320C2000__
     SCI_FIFO_TX5  = 0x0005U, //!< Transmit interrupt 5/16 full
     SCI_FIFO_TX6  = 0x0006U, //!< Transmit interrupt 6/16 full
     SCI_FIFO_TX7  = 0x0007U, //!< Transmit interrupt 7/16 full
@@ -146,8 +145,8 @@ typedef enum
     SCI_FIFO_TX13 = 0x000DU, //!< Transmit interrupt 13/16 full
     SCI_FIFO_TX14 = 0x000EU, //!< Transmit interrupt 14/16 full
     SCI_FIFO_TX15 = 0x000FU, //!< Transmit interrupt 15/16 full
-    SCI_FIFO_TX16 = 0x0010U  //!< Transmit interrupt full
-#endif
+    SCI_FIFO_TX16 = 0x0010U, //!< Transmit interrupt full
+    SCI_FIFO_TXFULL = 0x0010U, //!< Transmit interrupt full
 } SCI_TxFIFOLevel;
 
 //*****************************************************************************
@@ -164,7 +163,6 @@ typedef enum
     SCI_FIFO_RX2  = 0x0002U, //!< Receive interrupt 2/16 full
     SCI_FIFO_RX3  = 0x0003U, //!< Receive interrupt 3/16 full
     SCI_FIFO_RX4  = 0x0004U, //!< Receive interrupt 4/16 full
-#ifndef __TMS320C2000__
     SCI_FIFO_RX5  = 0x0005U, //!< Receive interrupt 5/16 full
     SCI_FIFO_RX6  = 0x0006U, //!< Receive interrupt 6/16 full
     SCI_FIFO_RX7  = 0x0007U, //!< Receive interrupt 7/16 full
@@ -176,8 +174,8 @@ typedef enum
     SCI_FIFO_RX13 = 0x000DU, //!< Receive interrupt 13/16 full
     SCI_FIFO_RX14 = 0x000EU, //!< Receive interrupt 14/16 full
     SCI_FIFO_RX15 = 0x000FU, //!< Receive interrupt 15/16 full
-    SCI_FIFO_RX16 = 0x0010U  //!< Receive interrupt full
-#endif
+    SCI_FIFO_RX16 = 0x0010U,  //!< Receive interrupt full
+    SCI_FIFO_RXFULL = 0x0010U, //!< Receive interrupt full
 } SCI_RxFIFOLevel;
 
 //*****************************************************************************
@@ -865,11 +863,7 @@ SCI_writeCharBlockingFIFO(uint32_t base, uint16_t data)
     //
     // Wait until space is available in the transmit FIFO.
     //
-#ifndef __TMS320C2000__
-    while(SCI_getTxFIFOStatus(base) == SCI_FIFO_TX15)
-#else
-    while(SCI_getTxFIFOStatus(base) == SCI_FIFO_TX3)
-#endif
+    while(SCI_getTxFIFOStatus(base) == SCI_FIFO_TXFULL)
     {
     }
 
@@ -1288,6 +1282,10 @@ SCI_setConfig(uint32_t base, uint32_t lspclkHz, uint32_t baud,
 //*****************************************************************************
 extern void
 SCI_writeCharArray(uint32_t base, const uint16_t * const array,
+                   uint16_t length);
+
+extern void
+SCI_writeByteArray(uint32_t base, const uint16_t * const array,
                    uint16_t length);
 
 //*****************************************************************************
