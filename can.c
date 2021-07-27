@@ -715,9 +715,11 @@ CAN_sendMessage(uint32_t base, uint32_t objID, uint16_t msgLen,
     //!< wait previous transmission to be completed
     uint32_t timeout=10000;
     do {
-        ECanaShadow.CANTA.all = pECanaRegs->CANTA.all;
+        // ECanaShadow.CANTA.all = pECanaRegs->CANTA.all;
+        ECanaShadow.CANTRS.all = pECanaRegs->CANTRS.all;
         if(--timeout == 0U) {break;}
-    } while((ECanaShadow.CANTA.all & (1ul << objID)) == 0);
+    // } while ((ECanaShadow.CANTA.all & (1ul << objID)) == 0);
+    } while ((ECanaShadow.CANTRS.all & (1ul << objID)) == 1);
 
     ECanaShadow.CANTA.all = 1ul << objID;       /* Clear TA bit */
     pECanaRegs->CANTA.all = ECanaShadow.CANTA.all;
