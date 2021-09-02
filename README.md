@@ -37,22 +37,22 @@ In the "Work Progress" can be seen the status of the work for every modules.
 |DMA | - | _TODO_ |
 |ECAP | - | _TODO_ |
 |HRCAP | - | _TODO_ |
-|EPWM | - | _TODO_ |
+|EPWM | - | DONE |
 |HRPWM | - | _TODO_ |
 |EQEP | - | _TODO_ |
 |FLASH | - | _TODO_ |
 |FSI | - | _TODO_ |
-|GPIO | - | _TODO_ |
+|GPIO | - | DONE |
 |I2C | - | _TODO_ |
 |Interrupt | - | _TODO_ |
 |LIN | - | _TODO_ |
 |MEMCFG | - | _TODO_ |
 |PGA | - | _TODO_ |
 |PMBUS | - | _TODO_ |
-|SCI | - | _TODO_ |
+|SCI | - | DONE |
 |SDFM | - | _TODO_ |
-|SPI | - | _TODO_ |
-|SYSCTL | - | _TODO_ |
+|SPI | - | DONE |
+|SYSCTL | - | DONE |
 |XBAR | - | _not present_ |
 
 
