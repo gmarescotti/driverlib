@@ -45,27 +45,27 @@ modules skipped as not present in the F2806x or F2803x DSP
 |ADC | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
 |ASysCtl | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
 |CLA | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
+|CMPSS | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
 |CPU Timer | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
 |DAC | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
 |DCC | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
-|DCSM | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
 |DMA | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
 |ECAP | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
 |HRCAP | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
 |HRPWM | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
 |EQEP | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
 |FLASH | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
-|FSI | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
 |I2C | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
 |Interrupt | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
-|LIN | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
 |MEMCFG | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
-|PGA | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
-|PMBUS | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
-|SDFM | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
+|DCSM | - | ![SKIP](https://via.placeholder.com/15/DEDEDE/000000?text=+) `SKIP` |
+|FSI | - | ![SKIP](https://via.placeholder.com/15/DEDEDE/000000?text=+) `SKIP` |
+|LIN | - | ![SKIP](https://via.placeholder.com/15/DEDEDE/000000?text=+) `SKIP` |
+|PGA | - | ![SKIP](https://via.placeholder.com/15/DEDEDE/000000?text=+) `SKIP` |
+|PMBUS | - | ![SKIP](https://via.placeholder.com/15/DEDEDE/000000?text=+) `SKIP` |
+|SDFM | - | ![SKIP](https://via.placeholder.com/15/DEDEDE/000000?text=+) `SKIP` |
 |CLAPROMCRC | - | ![SKIP](https://via.placeholder.com/15/DEDEDE/000000?text=+) `SKIP` |
 |CLB | - | ![SKIP](https://via.placeholder.com/15/DEDEDE/000000?text=+) `SKIP` |
-|CMPSS | - | ![SKIP](https://via.placeholder.com/15/DEDEDE/000000?text=+) `SKIP` |
 |XBAR | - | ![SKIP](https://via.placeholder.com/15/DEDEDE/000000?text=+) `SKIP` |
 
 ## Why using driverlib instead of bitfield registers
