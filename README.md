@@ -21,40 +21,52 @@ In the "Work Progress" can be seen the status of the work for every modules.
 - The F28035 has still not been tested.
 - sample projects from F280049 will be soon adapted to F28069 and linked here
 
+#### Legend
+
+- ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO`
+modules not yet ported
+- ![DONE](https://via.placeholder.com/15/c5f015/000000?text=+) `DONE`
+modules ported and tested
+- ![PARTIAL](https://via.placeholder.com/15/F9F000/000000?text=+) `(partially) DONE`
+modules ported and partially tested
+- ![SKIP](https://via.placeholder.com/15/DEDEDE/000000?text=+) `SKIP`
+modules skipped as not present in the F2806x or F2803x DSP
+
+#### Module list
+
 | Module Name | Work | State |
 | ------ | ------ | -- |
-|ADC | - | _TODO_ |
-|ASysCtl | - | _TODO_ |
-|CLAPROMCRC | - | _not present_ |
-|CLA | - | _TODO_ |
-|CAN | DONE (reimplemented using bitfield registers) | _not fully tested_ |
-|CLB | - | _not present_ |
-|CMPSS | - | _not present_ |
-|CPU Timer | - | _TODO_ |
-|DAC | - | _TODO_ |
-|DCC | - | _TODO_ |
-|DCSM | - | _TODO_ |
-|DMA | - | _TODO_ |
-|ECAP | - | _TODO_ |
-|HRCAP | - | _TODO_ |
-|EPWM | - | DONE |
-|HRPWM | - | _TODO_ |
-|EQEP | - | _TODO_ |
-|FLASH | - | _TODO_ |
-|FSI | - | _TODO_ |
-|GPIO | - | DONE |
-|I2C | - | _TODO_ |
-|Interrupt | - | _TODO_ |
-|LIN | - | _TODO_ |
-|MEMCFG | - | _TODO_ |
-|PGA | - | _TODO_ |
-|PMBUS | - | _TODO_ |
-|SCI | - | DONE |
-|SDFM | - | _TODO_ |
-|SPI | - | DONE |
-|SYSCTL | - | DONE |
-|XBAR | - | _not present_ |
-
+|CAN | reimplemented using bitfield registers | ![DONE](https://via.placeholder.com/15/c5f015/000000?text=+) `DONE` |
+|GPIO | - | ![DONE](https://via.placeholder.com/15/c5f015/000000?text=+) `DONE` |
+|SPI | - | ![DONE](https://via.placeholder.com/15/c5f015/000000?text=+) `DONE` |
+|EPWM | - | ![PARTIAL](https://via.placeholder.com/15/F9F000/000000?text=+) `(partially) DONE` |
+|SYSCTL | - | ![DONE](https://via.placeholder.com/15/c5f015/000000?text=+) `DONE` |
+|SCI | - | ![DONE](https://via.placeholder.com/15/c5f015/000000?text=+) `DONE` |
+|ADC | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
+|ASysCtl | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
+|CLA | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
+|CPU Timer | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
+|DAC | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
+|DCC | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
+|DCSM | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
+|DMA | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
+|ECAP | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
+|HRCAP | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
+|HRPWM | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
+|EQEP | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
+|FLASH | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
+|FSI | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
+|I2C | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
+|Interrupt | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
+|LIN | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
+|MEMCFG | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
+|PGA | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
+|PMBUS | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
+|SDFM | - | ![TODO](https://via.placeholder.com/15/f03c15/000000?text=+) `TODO` |
+|CLAPROMCRC | - | ![SKIP](https://via.placeholder.com/15/DEDEDE/000000?text=+) `SKIP` |
+|CLB | - | ![SKIP](https://via.placeholder.com/15/DEDEDE/000000?text=+) `SKIP` |
+|CMPSS | - | ![SKIP](https://via.placeholder.com/15/DEDEDE/000000?text=+) `SKIP` |
+|XBAR | - | ![SKIP](https://via.placeholder.com/15/DEDEDE/000000?text=+) `SKIP` |
 
 ## Why using driverlib instead of bitfield registers
 
