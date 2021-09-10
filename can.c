@@ -606,8 +606,11 @@ CAN_setupMessageObject(uint32_t base, uint32_t objID, uint32_t msgID,
     /**
     * Configura quali mailbox generano le interruzioni.
     */
-    if (msgType==CAN_MSG_OBJ_TYPE_RX) {
+    if (((msgType==CAN_MSG_OBJ_TYPE_RX) && (flags | CAN_MSG_OBJ_RX_INT_ENABLE))  ||
+            ((msgType==CAN_MSG_OBJ_TYPE_TX) && (flags | CAN_MSG_OBJ_TX_INT_ENABLE))) {
         pECanaRegs->CANMIM.all |= 1ul << objID;
+    } else {
+        pECanaRegs->CANMIM.all &= ~(1ul << objID);
     }
 
     /**
