@@ -1,4 +1,4 @@
-# Porting of C2000 _**Driverlib**_ to F2806x and F2803x
+# Porting of C2000 Peripheral Driver Library (Driverlib) to F2806x and F2803x
 
 Since Piccolo F280049, Texas Instruments offers an API software to configure and access hardware without the need to know the intrinsic details of any register of the DSP. This simplifies a lot writing the code and make the software easy to understand and to maintain.
 
