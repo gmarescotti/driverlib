@@ -71,9 +71,11 @@ static inline void __error__(char *filename, uint32_t line) {
                      }                                                        \
                      while(0)
 #define STATIC
+#define INLINE
 #else
 #define ASSERT(expr)
 #define STATIC static
+#define INLINE inline
 #endif
 
 #endif // DEBUG_H

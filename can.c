@@ -712,8 +712,11 @@ CAN_sendMessage(uint32_t base, uint32_t objID, uint16_t msgLen,
                                                 // transmitted. The bus-off state can be exited by clearing the CCR bit in CANMC register or if the
                                                 // Auto Bus On (ABO) (CANMC.7) bit is set, after 128 * 11 receive bits have been received. After
                                                 // leaving Bus Off, the error counters are cleared.
-            || (pECanaRegs->CANES.bit.ACKE == 1)) // The CAN module received no acknowledge.
+            || (pECanaRegs->CANES.bit.ACKE == 1)) { // The CAN module received no acknowledge.
+        pECanaRegs->CANES.bit.ACKE = 1;
+        // pECanaRegs->CANES.bit.BO = 1;
         return;
+    }
 
     //!< wait previous transmission to be completed
     uint32_t timeout=10000;
