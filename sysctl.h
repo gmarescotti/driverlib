@@ -987,9 +987,6 @@ SysCtl_disablePeripheral(SysCtl_PeripheralPCLOCKCR peripheral)
 static inline void
 SysCtl_resetDevice(void)
 {
-#ifdef __TMS320C2000__
-    ASSERT(false);
-#endif
     //
     // Write an incorrect check value to the watchdog control register
     // This will cause a device reset
