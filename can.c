@@ -99,7 +99,7 @@ CAN_initModule(uint32_t base)
 
     ECanaShadow.CANMC.all = pECanaRegs->CANMC.all;
     ECanaShadow.CANMC.bit.SCB = 1;
-    ECanaShadow.CANMC.bit.ABO = 0;
+    ECanaShadow.CANMC.bit.ABO = 1;
     pECanaRegs->CANMC.all = ECanaShadow.CANMC.all;
 
     /* Initialize all bits of 'Message Control Register' to zero */
@@ -712,19 +712,22 @@ CAN_sendMessage(uint32_t base, uint32_t objID, uint16_t msgLen,
                                                 // transmitted. The bus-off state can be exited by clearing the CCR bit in CANMC register or if the
                                                 // Auto Bus On (ABO) (CANMC.7) bit is set, after 128 * 11 receive bits have been received. After
                                                 // leaving Bus Off, the error counters are cleared.
-            || (pECanaRegs->CANES.bit.ACKE == 1)) { // The CAN module received no acknowledge.
-        pECanaRegs->CANES.bit.ACKE = 1;
-        // pECanaRegs->CANES.bit.BO = 1;
+            || (pECanaRegs->CANES.bit.ACKE == 1) // The CAN module received no acknowledge.
+            || (pECanaRegs->CANES.bit.EP == 1)
+            || (pECanaRegs->CANES.bit.SMA == 1)
+            || (pECanaRegs->CANES.bit.SA1 == 1)
+            || (pECanaRegs->CANES.bit.BE == 1)) {
+        pECanaRegs->CANES.all = 0xffffffff; // clear all
         return;
     }
 
     //!< wait previous transmission to be completed
     uint32_t timeout=10000;
     do {
-        // ECanaShadow.CANTA.all = pECanaRegs->CANTA.all;
         ECanaShadow.CANTRS.all = pECanaRegs->CANTRS.all;
-        if(--timeout == 0U) {break;}
-    // } while ((ECanaShadow.CANTA.all & (1ul << objID)) == 0);
+        if(--timeout == 0U) {
+            break;
+        }
     } while ((ECanaShadow.CANTRS.all & (1ul << objID)) == 1);
 
     ECanaShadow.CANTA.all = 1ul << objID;       /* Clear TA bit */
