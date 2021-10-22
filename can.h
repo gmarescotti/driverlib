@@ -1319,8 +1319,7 @@ CAN_getStatus(uint32_t base)
     //
     return(HWREGH(base + CAN_O_ES));
 #else
-    ASSERT(false);
-    return 0;
+    return pECanaRegs->CANES.all;
 #endif
 }
 
@@ -1440,8 +1439,14 @@ CAN_getInterruptCause(uint32_t base)
     //
     return(HWREG_BP(base + CAN_O_INT));
 #else
-    uint32_t objID = pECanaRegs->CANGIF1.bit.MIV1;
-    objID ++;
+    uint32_t objID;
+
+    if (pECanaRegs->CANGIF1.bit.GMIF1) {
+        objID = pECanaRegs->CANGIF1.bit.MIV1;
+        objID ++;
+    } else {
+        objID = CAN_INT_INT0ID_STATUS;
+    }
     return objID;
 
     // return CAN_INT_INT0ID_STATUS;
