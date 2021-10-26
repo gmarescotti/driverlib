@@ -757,7 +757,7 @@ SysCtl_getLowSpeedClock(uint32_t clockInHz)
 #else
     if(pSysCtrlRegs->LOSPCP.bit.LSPCLK != 0)
     {
-        //clockOut /= (2U * SysCtrlRegs->LOSPCP.bit.LSPCLK);
+        clockOut /= (2U * pSysCtrlRegs->LOSPCP.bit.LSPCLK);
     }
 #endif
 
