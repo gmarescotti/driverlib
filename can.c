@@ -365,7 +365,7 @@ CAN_clearInterruptStatus(uint32_t base, uint32_t intClr)
         }
     }
 #else
-    pECanaRegs->CANRMP.all |= (1 << intClr);
+    pECanaRegs->CANRMP.all |= (1ul << intClr);
 #endif
 }
 
@@ -554,6 +554,8 @@ CAN_setupMessageObject(uint32_t base, uint32_t objID, uint32_t msgID,
     HWREG_BP(base + CAN_O_IF1CMD) =
     cmdMaskReg | (objID & CAN_IF1CMD_MSG_NUM_M);
 #else
+    struct ECAN_REGS ECanaShadow;
+
     //
     // Check the arguments.
     //
@@ -583,10 +585,12 @@ CAN_setupMessageObject(uint32_t base, uint32_t objID, uint32_t msgID,
     /**
     * Configura le mailbox in ricezione/trasmissione
     */
+    ECanaShadow.CANMD.all = pECanaRegs->CANMD.all;
     if (msgType==CAN_MSG_OBJ_TYPE_RX)
-        pECanaRegs->CANMD.all |= (1ul << objID);
+        ECanaShadow.CANMD.all |= (1ul << objID);
     else
-        pECanaRegs->CANMD.all &= ~(1ul << objID);
+        ECanaShadow.CANMD.all &= ~(1ul << objID);
+    pECanaRegs->CANMD.all = ECanaShadow.CANMD.all;
 
     /**
     * Configura la lunghezza dei messaggi in byte.
@@ -596,7 +600,9 @@ CAN_setupMessageObject(uint32_t base, uint32_t objID, uint32_t msgID,
     /**
     * Abilita le mailbox.
     */
-    pECanaRegs->CANME.all |= (1ul << objID);
+    ECanaShadow.CANME.all = pECanaRegs->CANME.all;
+    ECanaShadow.CANME.all |= (1ul << objID);
+    pECanaRegs->CANME.all = ECanaShadow.CANME.all;
 
     /**
     * Configura le interruzioni
