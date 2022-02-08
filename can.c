@@ -97,9 +97,11 @@ CAN_initModule(uint32_t base)
     ECanaShadow.CANRIOC.bit.RXFUNC = 1;
     pECanaRegs->CANRIOC.all = ECanaShadow.CANRIOC.all;
 
+    // CANMC: Master Control Register
     ECanaShadow.CANMC.all = pECanaRegs->CANMC.all;
     ECanaShadow.CANMC.bit.SCB = 1;
     ECanaShadow.CANMC.bit.ABO = 1;
+    ECanaShadow.CANMC.bit.DBO = 1;  //!< Intel Endianness!
     pECanaRegs->CANMC.all = ECanaShadow.CANMC.all;
 
     /* Initialize all bits of 'Message Control Register' to zero */
@@ -739,8 +741,8 @@ CAN_sendMessage(uint32_t base, uint32_t objID, uint16_t msgLen,
     ECanaShadow.CANTA.all = 1ul << objID;       /* Clear TA bit */
     pECanaRegs->CANTA.all = ECanaShadow.CANTA.all;
 
-    mboxes[objID].MDH.all = *(Uint32*)&msgData[0];
-    mboxes[objID].MDL.all = *(Uint32*)&msgData[2];
+    mboxes[objID].MDH.all = *(Uint32*)&msgData[2];
+    mboxes[objID].MDL.all = *(Uint32*)&msgData[0];
 
     ECanaShadow.CANTRS.all = 1ul << objID;
     pECanaRegs->CANTRS.all = ECanaShadow.CANTRS.all;
@@ -827,8 +829,8 @@ CAN_readMessage(uint32_t base, uint32_t objID,
 
     objID--;
 
-    *(Uint32*)&msgData[0] = mboxes[objID].MDH.all;
-    *(Uint32*)&msgData[2] = mboxes[objID].MDL.all;
+    *(Uint32*)&msgData[2] = mboxes[objID].MDH.all;
+    *(Uint32*)&msgData[0] = mboxes[objID].MDL.all;
 
     return(status);
 #endif
