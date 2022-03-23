@@ -1658,7 +1658,6 @@ SysCtl_setWatchdogMode(SysCtl_WDMode mode)
     // watchdog will generate a reset signal or an interrupt signal. Take care
     // not to write a 1 to WDOVERRIDE.
     //
-#ifndef __TMS320C2000__
     if(mode == SYSCTL_WD_MODE_INTERRUPT)
     {
         HWREGH(WD_BASE + SYSCTL_O_SCSR) =
@@ -1670,9 +1669,6 @@ SysCtl_setWatchdogMode(SysCtl_WDMode mode)
         HWREGH(WD_BASE + SYSCTL_O_SCSR) &= ~(SYSCTL_SCSR_WDENINT |
                                              SYSCTL_SCSR_WDOVERRIDE);
     }
-#else
-    ASSERT(false);
-#endif
 
     EDIS;
 }
@@ -1700,12 +1696,7 @@ SysCtl_isWatchdogInterruptActive(void)
     //
     // If the status bit is cleared, the WDINTn signal is active.
     //
-#ifndef __TMS320C2000__
     return((HWREGH(WD_BASE + SYSCTL_O_SCSR) & SYSCTL_SCSR_WDINTS) == 0U);
-#else
-    ASSERT(false);
-    return false;
-#endif
 }
 
 //*****************************************************************************
@@ -1726,11 +1717,7 @@ SysCtl_disableWatchdog(void)
     //
     // Set the disable bit.
     //
-#ifndef __TMS320C2000__
     HWREGH(WD_BASE + SYSCTL_O_WDCR) |= SYSCTL_WD_CHKBITS | SYSCTL_WDCR_WDDIS;
-#else
-    pSysCtrlRegs->WDCR = SYSCTL_WD_CHKBITS | SYSCTL_WDCR_WDDIS;
-#endif
 
     EDIS;
 }
@@ -1753,12 +1740,8 @@ SysCtl_enableWatchdog(void)
     //
     // Clear the disable bit.
     //
-#ifndef __TMS320C2000__
     HWREGH(WD_BASE + SYSCTL_O_WDCR) = (HWREGH(WD_BASE + SYSCTL_O_WDCR) &
-                                       ~SYSCTL_WDCR_WDDIS) | SYSCTL_WD_CHKBITS;
-#else
-    ASSERT(false);
-#endif
+            ~SYSCTL_WDCR_WDDIS) | SYSCTL_WD_CHKBITS;
 
     EDIS;
 }
@@ -1780,12 +1763,8 @@ SysCtl_serviceWatchdog(void)
     //
     // Enable the counter to be reset and then reset it.
     //
-#ifndef __TMS320C2000__
     HWREGH(WD_BASE + SYSCTL_O_WDKEY) = SYSCTL_WD_ENRSTKEY;
     HWREGH(WD_BASE + SYSCTL_O_WDKEY) = SYSCTL_WD_RSTKEY;
-#else
-    ASSERT(false);
-#endif
 
     EDIS;
 }
@@ -1807,11 +1786,7 @@ SysCtl_enableWatchdogReset(void)
     //
     // Enable the counter to be reset
     //
-#ifndef __TMS320C2000__
     HWREGH(WD_BASE + SYSCTL_O_WDKEY) = SYSCTL_WD_ENRSTKEY;
-#else
-    ASSERT(false);
-#endif
 
     EDIS;
 }
@@ -1833,11 +1808,8 @@ SysCtl_resetWatchdog(void)
     //
     // Reset the watchdog counter
     //
-#ifndef __TMS320C2000__
     HWREGH(WD_BASE + SYSCTL_O_WDKEY) = SYSCTL_WD_RSTKEY;
-#else
-    ASSERT(false);
-#endif
+
     EDIS;
 }
 
@@ -1867,12 +1839,8 @@ SysCtl_setWatchdogPredivider(SysCtl_WDPredivider predivider)
     //
     // Write the predivider to the appropriate register.
     //
-#ifndef __TMS320C2000__
     HWREGH(WD_BASE + SYSCTL_O_WDCR) = (HWREGH(WD_BASE + SYSCTL_O_WDCR) &
                                        ~(SYSCTL_WDCR_WDPRECLKDIV_M)) | regVal;
-#else
-    ASSERT(false);
-#endif
 
     EDIS;
 }
@@ -1904,13 +1872,8 @@ SysCtl_setWatchdogPrescaler(SysCtl_WDPrescaler prescaler)
     //
     // Write the prescaler to the appropriate register.
     //
-#ifndef __TMS320C2000__
     HWREGH(WD_BASE + SYSCTL_O_WDCR) = (HWREGH(WD_BASE + SYSCTL_O_WDCR) &
                                        ~(SYSCTL_WDCR_WDPS_M)) | regVal;
-#else
-    ASSERT(false);
-#endif
-
     EDIS;
 }
 
@@ -1925,9 +1888,6 @@ SysCtl_setWatchdogPrescaler(SysCtl_WDPrescaler prescaler)
 static inline uint16_t
 SysCtl_getWatchdogCounterValue(void)
 {
-#ifdef __TMS320C2000__
-    ASSERT(false);
-#endif
     //
     // Read and return the value of the watchdog counter.
     //
@@ -2005,11 +1965,7 @@ SysCtl_setWatchdogWindowValue(uint16_t value)
     //
     // Clear the windowed value
     //
-#ifndef __TMS320C2000__
     HWREGH(WD_BASE + SYSCTL_O_WDWCR) &= ~SYSCTL_WDWCR_MIN_M;
-#else
-    ASSERT(false);
-#endif
 
     //
     // Set the windowed value
@@ -2035,11 +1991,7 @@ SysCtl_clearWatchdogOverride(void)
 {
     EALLOW;
 
-#ifndef __TMS320C2000__
     HWREGH(WD_BASE + SYSCTL_O_SCSR) |= SYSCTL_SCSR_WDOVERRIDE;
-#else
-    ASSERT(false);
-#endif
 
     EDIS;
 }
@@ -2059,11 +2011,7 @@ SysCtl_enableNMIGlobalInterrupt(void)
 {
     EALLOW;
 
-#ifndef __TMS320C2000__
     HWREGH(NMI_BASE + NMI_O_CFG) |= NMI_CFG_NMIE;
-#else
-    ASSERT(false);
-#endif
 
     EDIS;
 }
@@ -2084,12 +2032,7 @@ SysCtl_getNMIStatus(void)
     // Read and return the current value of the NMI flag register, masking out
     // all but the NMI bit.
     //
-#ifndef __TMS320C2000__
     return((HWREGH(NMI_BASE + NMI_O_FLG) & NMI_FLG_NMIINT) != 0U);
-#else
-    ASSERT(false);
-    return false;
-#endif
 }
 
 //*****************************************************************************
@@ -2112,9 +2055,6 @@ SysCtl_getNMIStatus(void)
 static inline uint16_t
 SysCtl_getNMIFlagStatus(void)
 {
-#ifdef __TMS320C2000__
-    ASSERT(false);
-#endif
     //
     // Read and return the current value of the NMI flag register.
     //
@@ -2147,9 +2087,6 @@ SysCtl_getNMIFlagStatus(void)
 static inline bool
 SysCtl_isNMIFlagSet(uint32_t nmiFlags)
 {
-#ifdef __TMS320C2000__
-    ASSERT(false);
-#endif
     //
     // Check the arguments.
     // Make sure if reserved bits are not set in nmiFlags.
@@ -2215,12 +2152,8 @@ SysCtl_clearNMIStatus(uint32_t nmiFlags)
     //
     // Clear the individual flags as well as NMI Interrupt flag
     //
-#ifndef __TMS320C2000__
     HWREGH(NMI_BASE + NMI_O_FLGCLR) = nmiFlags;
     HWREGH(NMI_BASE + NMI_O_FLGCLR) = NMI_FLG_NMIINT;
-#else
-    ASSERT(false);
-#endif
 
     EDIS;
 }
@@ -2244,12 +2177,8 @@ SysCtl_clearAllNMIFlags(void)
     EALLOW;
 
     nmiFlags = SysCtl_getNMIFlagStatus();
-#ifndef __TMS320C2000__
     HWREGH(NMI_BASE + NMI_O_FLGCLR) = nmiFlags;
     HWREGH(NMI_BASE + NMI_O_FLGCLR) = NMI_FLG_NMIINT;
-#else
-    ASSERT(false);
-#endif
 
     EDIS;
 }
@@ -2275,9 +2204,6 @@ SysCtl_clearAllNMIFlags(void)
 static inline void
 SysCtl_forceNMIFlags(uint32_t nmiFlags)
 {
-#ifdef __TMS320C2000__
-    ASSERT(false);
-#endif
     //
     // Check the arguments.
     // Make sure if reserved bits are not set in nmiFlags.
@@ -2318,12 +2244,7 @@ SysCtl_getNMIWatchdogCounter(void)
     //
     // Read and return the NMI watchdog counter register's value.
     //
-#ifndef __TMS320C2000__
     return(HWREGH(NMI_BASE + NMI_O_WDCNT));
-#else
-    ASSERT(false);
-    return 0;
-#endif
 }
 
 //*****************************************************************************
@@ -2350,11 +2271,7 @@ SysCtl_setNMIWatchdogPeriod(uint16_t wdPeriod)
     //
     // Write to the period register.
     //
-#ifndef __TMS320C2000__
     HWREGH(NMI_BASE + NMI_O_WDPRD) = wdPeriod;
-#else
-    ASSERT(false);
-#endif
 
     EDIS;
 }
@@ -2369,9 +2286,6 @@ SysCtl_setNMIWatchdogPeriod(uint16_t wdPeriod)
 static inline uint16_t
 SysCtl_getNMIWatchdogPeriod(void)
 {
-#ifdef __TMS320C2000__
-    ASSERT(false);
-#endif
     //
     // Read and return the NMI watchdog period register's value.
     //
