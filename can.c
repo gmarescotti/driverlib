@@ -367,7 +367,7 @@ CAN_clearInterruptStatus(uint32_t base, uint32_t intClr)
         }
     }
 #else
-    pECanaRegs->CANRMP.all |= (1ul << intClr);
+    pECanaRegs->CANRMP.all |= (1ul << (intClr-1));
 #endif
 }
 
