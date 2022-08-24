@@ -710,6 +710,7 @@ CAN_sendMessage(uint32_t base, uint32_t objID, uint16_t msgLen,
 #else
     volatile struct MBOX *mboxes = &pECanaMboxes->MBOX0;
     struct ECAN_REGS ECanaShadow;
+    uint32_t timeout=1000000;
 
     objID--;
 
@@ -735,7 +736,9 @@ CAN_sendMessage(uint32_t base, uint32_t objID, uint16_t msgLen,
     ECanaShadow.CANTRS.all = 1ul << objID;
     pECanaRegs->CANTRS.all = ECanaShadow.CANTRS.all;
 
-    while ((pECanaRegs->CANTA.all & (1ul << objID)) == 0) {}
+    while ((pECanaRegs->CANTA.all & (1ul << objID)) == 0) {
+        if (timeout-- == 0) break;
+    }
     pECanaRegs->CANTA.all = 1ul << objID;       /* Clear TA bit */
 
 #endif
